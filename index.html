@@ -550,6 +550,8 @@
             display: flex;
             gap: 10px;
             align-items: center;
+            flex-wrap: wrap; /* Tambahkan ini untuk responsivitas */
+            justify-content: flex-end; /* Tambahkan ini untuk responsivitas */
         }
         .auth-controls button {
             background-color: #8B0000;
@@ -559,9 +561,18 @@
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            white-space: nowrap; /* Mencegah teks tombol pecah */
         }
         .auth-controls button:hover {
             background-color: #FF0000;
+        }
+        .auth-controls input {
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #333;
         }
         .admin-status {
             font-weight: 600;
@@ -570,6 +581,7 @@
             padding: 5px 10px;
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            white-space: nowrap;
         }
 
         /* --- Mobile Optimizations --- */
@@ -701,10 +713,16 @@
                 right: 10px;
                 flex-direction: column;
                 align-items: flex-end;
+                gap: 5px; /* Kurangi jarak antar elemen */
             }
             .auth-controls button {
                 padding: 5px 10px;
                 font-size: 0.8rem;
+            }
+            .auth-controls input {
+                width: 100%; /* Penuh lebar */
+                box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
+                margin-bottom: 5px; /* Jarak antar input */
             }
             .admin-status {
                 font-size: 0.7rem;
@@ -750,8 +768,17 @@
     <!-- Kontrol Autentikasi -->
     <div class="auth-controls">
         <span id="admin-status" class="admin-status hidden"></span>
-        <button id="login-button" onclick="signInWithGoogle()">Login Admin</button>
+        <button id="toggle-email-auth" onclick="toggleEmailAuth()">Login/Sign Up</button>
         <button id="logout-button" onclick="signOutUser()" class="hidden">Logout</button>
+
+        <div id="email-password-auth" class="hidden flex flex-col items-end gap-2 mt-2 w-full">
+            <input type="email" id="email-input" placeholder="Email" class="p-2 border rounded-md w-full">
+            <input type="password" id="password-input" placeholder="Password" class="p-2 border rounded-md w-full">
+            <div class="flex gap-2 w-full justify-end">
+                <button id="signup-button" onclick="signUpWithEmailPassword()" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-md">Sign Up</button>
+                <button id="signin-email-button" onclick="signInWithEmailPassword()" class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-md">Sign In</button>
+            </div>
+        </div>
     </div>
 
     <div class="tabs">
@@ -1422,26 +1449,44 @@
             });
         }
 
-       async function signInAdmin() {
-            const emailInput = document.getElementById('admin@genetek.co.id');
-            const passwordInput = document.getElementById('Admin12345');
-
-            const email = emailInput.value;
-            const password = passwordInput.value;
+        // Fungsi untuk pendaftaran dengan Email/Password
+        async function signUpWithEmailPassword() {
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
 
             if (!email || !password) {
-                alert("Email dan Password harus diisi.");
+                alert("Please enter both email and password.");
+                return;
+            }
+
+            try {
+                await auth.createUserWithEmailAndPassword(email, password);
+                console.log("User signed up with email/password.");
+                alert("Registration successful! You are now logged in.");
+                document.getElementById('email-password-auth').classList.add('hidden');
+            } catch (error) {
+                console.error("Error signing up with email/password:", error);
+                alert("Registration failed: " + error.message);
+            }
+        }
+
+        // Fungsi untuk login dengan Email/Password
+        async function signInWithEmailPassword() {
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
+
+            if (!email || !password) {
+                alert("Please enter both email and password.");
                 return;
             }
 
             try {
                 await auth.signInWithEmailAndPassword(email, password);
-                console.log("User signed in with Email/Password.");
-                // Bersihkan input setelah login berhasil
-                emailInput.value = '';
-                passwordInput.value = '';
+                console.log("User signed in with email/password.");
+                alert("Login successful!");
+                document.getElementById('email-password-auth').classList.add('hidden');
             } catch (error) {
-                console.error("Error signing in with Email/Password:", error);
+                console.error("Error signing in with email/password:", error);
                 alert("Login failed: " + error.message);
             }
         }
@@ -1457,18 +1502,24 @@
             }
         }
 
+        // Fungsi untuk menampilkan/menyembunyikan form email/password
+        function toggleEmailAuth() {
+            const emailAuthDiv = document.getElementById('email-password-auth');
+            emailAuthDiv.classList.toggle('hidden');
+        }
+
         // Listener untuk perubahan status autentikasi
         auth.onAuthStateChanged(async (user) => {
-            const loginButton = document.getElementById('login-button');
+            const toggleEmailAuthButton = document.getElementById('toggle-email-auth');
             const logoutButton = document.getElementById('logout-button');
             const adminStatusSpan = document.getElementById('admin-status');
 
             if (user) {
                 // User is signed in.
-                loginButton.classList.add('hidden');
+                toggleEmailAuthButton.classList.add('hidden');
                 logoutButton.classList.remove('hidden');
                 adminStatusSpan.classList.remove('hidden');
-                adminStatusSpan.textContent = `Logged in as: ${user.displayName}`;
+                adminStatusSpan.textContent = `Logged in as: ${user.displayName || user.email}`;
 
                 // Periksa apakah user adalah admin
                 const adminDoc = await adminUidsRef.get();
@@ -1486,7 +1537,7 @@
             } else {
                 // User is signed out.
                 isAdmin = false;
-                loginButton.classList.remove('hidden');
+                toggleEmailAuthButton.classList.remove('hidden');
                 logoutButton.classList.add('hidden');
                 adminStatusSpan.classList.add('hidden');
                 adminStatusSpan.textContent = "";
