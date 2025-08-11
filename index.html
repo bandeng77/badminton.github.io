@@ -664,6 +664,7 @@
             }
         }
     </style>
+<script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
 </head>
 <body>
     <!-- Efek Partikel Latar Belakang (Konfeti) -->
@@ -1912,5 +1913,41 @@
 
         window.onload = initTournament;
     </script>
+
+<script>
+// ===== Proteksi Admin =====
+const auth = firebase.auth();
+
+// Saat status login berubah, aktifkan edit hanya untuk admin
+auth.onAuthStateChanged(user => {
+    if (user && user.email === "admin@genetek.co.id") {
+        enableEditing();
+    } else {
+        disableEditing();
+    }
+});
+
+// Nonaktifkan semua input default
+function disableEditing() {
+    document.querySelectorAll(".player-name-select, .score-input").forEach(el => {
+        el.disabled = true;
+        el.style.backgroundColor = "#f3f4f6"; // abu-abu
+    });
+}
+
+// Aktifkan edit untuk admin
+function enableEditing() {
+    document.querySelectorAll(".player-name-select, .score-input").forEach(el => {
+        el.disabled = false;
+        el.style.backgroundColor = "white";
+    });
+}
+
+// Saat halaman dibuka pertama kali → kunci semua input
+window.addEventListener("DOMContentLoaded", () => {
+    disableEditing();
+});
+</script>
+
 </body>
 </html>
