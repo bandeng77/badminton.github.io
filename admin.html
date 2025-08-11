@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Badminton Bracket - ADMIN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ... (Salin semua CSS dari index.html Anda yang asli, termasuk yang baru ditambahkan untuk efek visual, tetapi JANGAN salin CSS '.view-only' yang baru ditambahkan di index.html) ... */
+    </style>
+</head>
+<body>
+    <!-- ... (Salin semua konten HTML dari index.html Anda yang asli) ... -->
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Firebase Configuration (Sama seperti di index.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCgXWrv-yNSGV1cCzMghgNksY1XNHAfl38",
+            authDomain: "badmintonefk.firebaseapp.com",
+            projectId: "badmintonefk",
+            storageBucket: "badmintonefk.firebasestorage.app",
+            messagingSenderId: "987525154148",
+            appId: "1:987525154148:web:faba3301c884e9cf6a2671"
+        };
+
+        // Initialize Firebase (Sama seperti di index.html)
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Global variables (Sama seperti di index.html)
+        let currentTab = 'singles';
+        let liveMatchId = null;
+        let matchInterval = null;
+        let currentSet = 1;
+        let player1Score = 0;
+        let player2Score = 0;
+
+        // Daftar pemain yang tersedia (Sama seperti di index.html)
+        const allPlayers = [
+            "BINTANG NORYS", "NURHIDAYAT", "HUSNI", "QOSIM", "EDWIN", "ANDI SUROSO", "ACHMAD FADIL", "RAKA"
+        ];
+
+        // Initial player assignments (Sama seperti di index.html)
+        const initialPlayerAssignments = {
+            'singles': {
+                'qf1': ['BINTANG NORYS', 'NURHIDAYAT'],
+                'qf2': ['HUSNI', 'QOSIM'],
+                'qf3': ['EDWIN', 'ANDI SUROSO'],
+                'qf4': ['ACHMAD FADIL', 'RAKA']
+            },
+            'doubles': {
+                'qf1': ['RAKA & ACHMAD FADIL ', 'PUTRA & HARYO'],
+                'qf2': ['EDWIN & WAHYU YIB', 'RANGGA & ANDI SUROSO'],
+                'qf3': ['ANDY RAHMAN & GALIH', 'BRIAN & NURHIDAYAT'],
+                'qf4': ['QOSIM & WAHYU ARDIANSYAH', 'HUSNI & BINTANG NORYS']
+            },
+            'mix-doubles': {
+                'r16-1': ['ANDI SUROSO & MAIDA', 'WAHYU ARDIANSYAH & ANISA'],
+                'r16-2': ['ACHMAD FADIL & ANGGI', 'BINTANG NORYS & WINDA'],
+                'r16-3': ['RENI & PUTRA', 'NURHIDAYAT & TANIA'],
+                'all-mix-players': [
+                    'ANDI SUROSO & MAIDA', 'WAHYU ARDIANSYAH & ANISA',
+                    'ACHMAD FADIL & ANGGI', 'BINTANG NORYS & WINDA',
+                    'RENI & PUTRA', 'NURHIDAYAT & TANIA',
+                    'HUSNI & TUTI', 'GALIH & MARIA', 'ANDY SUROSO & ROSSIANA', 'EDWIN & ARIFA', 'RAKA & KARTIKA'
+                ]
+            }
+        };
+
+        // Fungsi-fungsi yang sudah ada (changeTab, toggleLiveScore, closeLiveScore, updateLiveScoreboard, updateProgressBar)
+        // ... (Salin semua fungsi ini dari index.html Anda yang asli) ...
+
+        // initTournament untuk admin.html (Sama seperti initTournament asli Anda)
+        async function initTournament() {
+            console.log("Initializing tournament (Admin Mode)...");
+            // Add event listeners to all score inputs
+            document.querySelectorAll('.score-input').forEach(input => {
+                input.addEventListener('change', updateWinner);
+                input.addEventListener('input', updateLiveScoreboardOnInput);
+                input.addEventListener('change', saveData); // Save data on score change
+                input.removeAttribute('readonly'); // Pastikan tidak readonly
+            });
+
+            // Add event listeners to player name selects
+            document.querySelectorAll('.player-name-select').forEach(select => {
+                select.addEventListener('change', updateLiveScoreboardOnInput);
+                select.addEventListener('change', saveData); // Save data on player name change
+                select.removeAttribute('disabled'); // Pastikan tidak disabled
+            });
+
+            // Populate initial player dropdowns for all brackets before loading data
+            populateAllPlayerDropdowns();
+
+            await loadData(); // Load data when the tournament initializes
+            console.log("Data loaded. Checking current tab...");
+
+            const savedTab = localStorage.getItem('currentTab');
+            if (savedTab) {
+                changeTab(savedTab);
+                console.log(`Switched to saved tab: ${savedTab}`);
+            } else {
+                changeTab('singles');
+                console.log("No saved tab found, defaulting to singles.");
+            }
+            console.log("Tournament initialization complete.");
+
+            setMatchHeightCssVariable();
+            window.addEventListener('resize', setMatchHeightCssVariable);
+
+            createParticles();
+            setInterval(createFirework, 5000);
+        }
+
+        // Fungsi-fungsi lain (setMatchHeightCssVariable, createParticles, createFirework, populateAllPlayerDropdowns, updateLiveScoreboardOnInput)
+        // ... (Salin semua fungsi ini dari index.html Anda yang asli) ...
+
+        // Fungsi updateWinner (Sama seperti updateWinner asli Anda, dengan panggilan saveData)
+        function updateWinner(event) {
+            const match = event.target.closest('.match');
+            if (!match) return;
+
+            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+            const player1Div = match.querySelector('.player[data-player="1"]');
+            const player2Div = match.querySelector('.player[data-player="2"]');
+
+            if (!player1Select || !player2Select) {
+                return;
+            }
+
+            const p1ScoreInputs = Array.from(match.querySelectorAll('.player[data-player="1"] .score-input'));
+            const p2ScoreInputs = Array.from(match.querySelectorAll('.player[data-player="2"] .score-input'));
+
+            let p1SetWins = 0;
+            let p2SetWins = 0;
+            const setWinners = [];
+
+            for (let i = 0; i < Math.min(p1ScoreInputs.length, p2ScoreInputs.length); i++) {
+                const p1s = parseInt(p1ScoreInputs[i].value);
+                const p2s = parseInt(p2ScoreInputs[i].value);
+
+                if (p1s >= 21 && (p1s - p2s >= 2 || p1s === 30)) {
+                    p1SetWins++;
+                    setWinners[i] = 'player1';
+                } else if (p2s >= 21 && (p2s - p1s >= 2 || p2s === 30)) {
+                    p2SetWins++;
+                    setWinners[i] = 'player2';
+                } else {
+                    setWinners[i] = null;
+                }
+            }
+
+            player1Div.classList.remove('winner');
+            player2Div.classList.remove('winner');
+
+            if (p1SetWins > p2SetWins) {
+                player1Div.classList.add('winner');
+            } else if (p2SetWins > p1SetWins) {
+                player2Div.classList.add('winner');
+            }
+
+            match.dataset.matchData = JSON.stringify({ setWinners: setWinners });
+
+            if (liveMatchId === match.getAttribute('data-match-id')) {
+                let activeSetFound = false;
+                for (let i = 0; i < p1ScoreInputs.length; i++) {
+                    if (parseInt(p1ScoreInputs[i].value) !== 0 || parseInt(p2ScoreInputs[i].value) !== 0) {
+                        currentSet = i + 1;
+                        activeSetFound = true;
+                        break;
+                    }
+                }
+                if (!activeSetFound) {
+                    currentSet = 1;
+                }
+
+                updateLiveScoreboard(match);
+                if (p1SetWins >= 2 || p2SetWins >= 2) {
+                    document.getElementById('match-status').textContent = 'Match Completed';
+                } else {
+                    document.getElementById('match-status').textContent = 'Playing';
+                }
+            }
+            saveData(); // Panggil saveData di sini
+        }
+
+        // Fungsi saveData dan loadData (Sama seperti di index.html Anda yang asli)
+        // ... (Salin fungsi saveData dan loadData yang sudah ada) ...
+
+        window.onload = initTournament;
+    </script>
+</body>
+</html>
