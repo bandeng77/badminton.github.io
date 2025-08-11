@@ -51,6 +51,8 @@
             align-items: center;
             padding: 0.75rem 0.5rem;
             border-bottom: 1px solid #e2e8f0;
+            /* Added for player name wrapping */
+            flex-wrap: wrap;
         }
 
         .player:last-child {
@@ -71,12 +73,20 @@
             background-color: #f9fafb;
             font-family: 'Poppins', sans-serif;
             font-size: 0.9rem;
+            /* Added for player name wrapping */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            min-width: 0; /* Important for flexbox to shrink */
         }
 
         .score-container {
             display: flex;
             gap: 0.15rem;
             align-items: center;
+            /* Added for player name wrapping */
+            flex-shrink: 0;
         }
 
         .score-input {
@@ -920,12 +930,16 @@
                 'qf4': ['QOSIM & WAHYU ARDIANSYAH', 'HUSNI & BINTANG NORYS']
             },
             'mix-doubles': {
+                // Initial R16 matches (these will be the default selected values)
                 'r16-1': ['ANDI SUROSO & MAIDA', 'WAHYU ARDIANSYAH & ANISA'],
                 'r16-2': ['ACHMAD FADIL & ANGGI', 'BINTANG NORYS & WINDA'],
                 'r16-3': ['RENI & PUTRA', 'NURHIDAYAT & TANIA'],
-                'initial-players': [
-                    'Mix A', 'Mix B', 'Mix C', 'Mix D', 'Mix E', 'Mix F',
-                    'Mix G (Bye)', 'Mix H (Bye)', 'Mix I (Bye)', 'Mix J (Bye)', 'Mix K (Bye)'
+                // List of all possible players for mix doubles (including those previously "Bye")
+                'all-mix-players': [
+                    'ANDI SUROSO & MAIDA', 'WAHYU ARDIANSYAH & ANISA',
+                    'ACHMAD FADIL & ANGGI', 'BINTANG NORYS & WINDA',
+                    'RENI & PUTRA', 'NURHIDAYAT & TANIA',
+                    'HUSNI & TUTI', 'GALIH & MARIA', 'ANDY SUROSO & ROSSIANA', 'EDWIN & ARIFA', 'RAKA & KARTIKA' // Renamed from (Bye)
                 ]
             }
         };
@@ -945,15 +959,10 @@
                 select.addEventListener('change', saveData); // Save data on player name change
             });
 
-            loadData(); // Load data when the tournament initializes
-
-            // Populate initial player dropdowns for all brackets
+            // Populate initial player dropdowns for all brackets before loading data
             populateAllPlayerDropdowns();
 
-            // Hide all brackets except current tab (this will be overridden by loadData if a tab was saved)
-            document.getElementById('singles-bracket').classList.remove('hidden');
-            document.getElementById('doubles-bracket').classList.add('hidden');
-            document.getElementById('mix-doubles-bracket').classList.add('hidden');
+            loadData(); // Load data when the tournament initializes
 
             // Ensure the correct tab is active after loading data
             const savedTab = localStorage.getItem('currentTab');
@@ -970,162 +979,78 @@
                 const bracketElement = document.getElementById(`${bracketType}-bracket`);
                 if (!bracketElement) return;
 
-                if (bracketType === 'mix-doubles') {
-                    const mixDoublesPlayers = initialPlayerAssignments['mix-doubles']['initial-players'];
-                    const r16Matches = [
-                        { id: 'mix-doubles-r16-1', p1: mixDoublesPlayers[0], p2: mixDoublesPlayers[1] },
-                        { id: 'mix-doubles-r16-2', p1: mixDoublesPlayers[2], p2: mixDoublesPlayers[3] },
-                        { id: 'mix-doubles-r16-3', p1: mixDoublesPlayers[4], p2: mixDoublesPlayers[5] }
-                    ];
+                bracketElement.querySelectorAll('.match').forEach(match => {
+                    const matchId = match.getAttribute('data-match-id');
+                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
 
-                    r16Matches.forEach(matchData => {
-                        const match = bracketElement.querySelector(`.match[data-match-id="${matchData.id}"]`);
-                        if (match) {
-                            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
-                            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                    if (!player1Select || !player2Select) return;
 
-                            player1Select.innerHTML = '';
-                            player2Select.innerHTML = '';
+                    player1Select.innerHTML = '';
+                    player2Select.innerHTML = '';
 
-                            mixDoublesPlayers.forEach(player => {
-                                const option1 = document.createElement('option');
-                                option1.value = player;
-                                option1.textContent = player;
-                                player1Select.appendChild(option1);
+                    const defaultOption1 = document.createElement('option');
+                    defaultOption1.value = '';
+                    defaultOption1.textContent = 'Select Player';
+                    player1Select.appendChild(defaultOption1);
 
-                                const option2 = document.createElement('option');
-                                option2.value = player;
-                                option2.textContent = player;
-                                player2Select.appendChild(option2);
-                            });
+                    const defaultOption2 = document.createElement('option');
+                    defaultOption2.value = '';
+                    defaultOption2.textContent = 'Select Player';
+                    player2Select.appendChild(defaultOption2);
 
-                            // Set initial values, these might be overridden by loaded data
-                            player1Select.value = matchData.p1;
-                            player2Select.value = matchData.p2;
-                            player1Select.disabled = false;
-                            player2Select.disabled = false;
-                        }
+                    let playersToPopulate = [];
+                    if (bracketType === 'singles') {
+                        playersToPopulate = allPlayers;
+                    } else if (bracketType === 'doubles') {
+                        // For doubles, we'll use a combined list of all initial doubles players
+                        playersToPopulate = [
+                            'RAKA & ACHMAD FADIL ', 'PUTRA & HARYO',
+                            'EDWIN & WAHYU YIB', 'RANGGA & ANDI SUROSO',
+                            'ANDY RAHMAN & GALIH', 'BRIAN & NURHIDAYAT',
+                            'QOSIM & WAHYU ARDIANSYAH', 'HUSNI & BINTANG NORYS'
+                        ];
+                    } else if (bracketType === 'mix-doubles') {
+                        playersToPopulate = initialPlayerAssignments['mix-doubles']['all-mix-players'];
+                    }
+
+                    playersToPopulate.forEach(player => {
+                        const option1 = document.createElement('option');
+                        option1.value = player;
+                        option1.textContent = player;
+                        player1Select.appendChild(option1);
+
+                        const option2 = document.createElement('option');
+                        option2.value = player;
+                        option2.textContent = player;
+                        player2Select.appendChild(option2);
                     });
 
-                    bracketElement.querySelectorAll('.match').forEach(match => {
-                        const matchId = match.getAttribute('data-match-id');
-                        if (matchId.includes('qf') || matchId.includes('sf') || matchId.includes('final')) {
-                            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
-                            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
-                            if (player1Select && player2Select) {
-                                player1Select.innerHTML = '';
-                                player2Select.innerHTML = '';
-                                const tbdOption1 = document.createElement('option');
-                                tbdOption1.value = 'TBD';
-                                tbdOption1.textContent = 'TBD';
-                                player1Select.appendChild(tbdOption1);
-                                const tbdOption2 = document.createElement('option');
-                                tbdOption2.value = 'TBD';
-                                tbdOption2.textContent = 'TBD';
-                                player2Select.appendChild(tbdOption2);
-                                player1Select.disabled = true;
-                                player2Select.disabled = true;
-                            }
+                    // Set initial players for matches if they exist in initialPlayerAssignments
+                    if (bracketType === 'singles' && matchId.includes('qf')) {
+                        const initialPlayers = initialPlayerAssignments['singles'][matchId.split('-')[1]];
+                        if (initialPlayers) {
+                            player1Select.value = initialPlayers[0];
+                            player2Select.value = initialPlayers[1];
                         }
-                    });
-
-                    const qfMatches = [
-                        { id: 'mix-doubles-qf1', p1_source: 'r16-1', p2_name: 'Mix G (Bye)' },
-                        { id: 'mix-doubles-qf2', p1_source: 'r16-2', p2_name: 'Mix H (Bye)' },
-                        { id: 'mix-doubles-qf3', p1_source: 'r16-3', p2_name: 'Mix I (Bye)' },
-                        { id: 'mix-doubles-qf4', p1_name: 'Mix J (Bye)', p2_name: 'Mix K (Bye)' }
-                    ];
-
-                    qfMatches.forEach(qfData => {
-                        const qfMatch = bracketElement.querySelector(`.match[data-match-id="${qfData.id}"]`);
-                        if (qfMatch) {
-                            const p1Select = qfMatch.querySelector('.player[data-player="1"] .player-name-select');
-                            const p2Select = qfMatch.querySelector('.player[data-player="2"] .player-name-select');
-
-                            if (qfData.p1_name) {
-                                p1Select.innerHTML = '';
-                                const option = document.createElement('option');
-                                option.value = qfData.p1_name;
-                                option.textContent = qfData.p1_name;
-                                p1Select.appendChild(option);
-                                p1Select.value = qfData.p1_name;
-                                p1Select.disabled = true;
-                            }
-
-                            if (qfData.p2_name) {
-                                p2Select.innerHTML = '';
-                                const option = document.createElement('option');
-                                option.value = qfData.p2_name;
-                                option.textContent = qfData.p2_name;
-                                p2Select.appendChild(option);
-                                p2Select.value = qfData.p2_name;
-                                p2Select.disabled = true;
-                            }
+                    } else if (bracketType === 'doubles' && matchId.includes('qf')) {
+                        const initialPlayers = initialPlayerAssignments['doubles'][matchId.split('-')[1]];
+                        if (initialPlayers) {
+                            player1Select.value = initialPlayers[0];
+                            player2Select.value = initialPlayers[1];
                         }
-                    });
-
-                } else { // Singles and Doubles (standard 8-player bracket)
-                    bracketElement.querySelectorAll('.match').forEach(match => {
-                        const matchId = match.getAttribute('data-match-id');
-                        const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
-                        const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
-
-                        if (!player1Select || !player2Select) return;
-
-                        if (matchId.includes('qf')) {
-                            player1Select.innerHTML = '';
-                            player2Select.innerHTML = '';
-
-                            const defaultOption1 = document.createElement('option');
-                            defaultOption1.value = '';
-                            defaultOption1.textContent = 'Select Player';
-                            player1Select.appendChild(defaultOption1);
-
-                            const defaultOption2 = document.createElement('option');
-                            defaultOption2.value = '';
-                            defaultOption2.textContent = 'Select Player';
-                            player2Select.appendChild(defaultOption2);
-
-                            const playersToPopulate = (bracketType === 'singles') ? allPlayers : initialPlayerAssignments[bracketType][matchId.split('-')[1]];
-
-                            if (playersToPopulate) {
-                                playersToPopulate.forEach(player => {
-                                    const option1 = document.createElement('option');
-                                    option1.value = player;
-                                    option1.textContent = player;
-                                    player1Select.appendChild(option1);
-
-                                    const option2 = document.createElement('option');
-                                    option2.value = player;
-                                    option2.textContent = player;
-                                    player2Select.appendChild(option2);
-                                });
-                            }
-
-                            const initialPlayers = initialPlayerAssignments[bracketType][matchId.split('-')[1]];
-                            if (initialPlayers) {
-                                player1Select.value = initialPlayers[0];
-                                player2Select.value = initialPlayers[1];
-                            }
-                            player1Select.disabled = false;
-                            player2Select.disabled = false;
-
-                        } else { // SF and Final
-                            player1Select.innerHTML = '';
-                            player2Select.innerHTML = '';
-                            const tbdOption1 = document.createElement('option');
-                            tbdOption1.value = 'TBD';
-                            tbdOption1.textContent = 'TBD';
-                            player1Select.appendChild(tbdOption1);
-                            const tbdOption2 = document.createElement('option');
-                            tbdOption2.value = 'TBD';
-                            tbdOption2.textContent = 'TBD';
-                            player2Select.appendChild(tbdOption2);
-                            player1Select.disabled = true;
-                            player2Select.disabled = true;
+                    } else if (bracketType === 'mix-doubles' && matchId.includes('r16')) {
+                        const initialPlayers = initialPlayerAssignments['mix-doubles'][matchId.split('-')[1]];
+                        if (initialPlayers) {
+                            player1Select.value = initialPlayers[0];
+                            player2Select.value = initialPlayers[1];
                         }
-                    });
-                }
+                    }
+
+                    // Ensure all dropdowns are enabled by default
+                    player1Select.disabled = false;
+                    player2Select.disabled = false;
+                });
             });
         }
 
@@ -1276,69 +1201,15 @@
             player1Div.classList.remove('winner');
             player2Div.classList.remove('winner');
 
-            let winnerPlayerName = null;
+            // Determine winner based on sets won
             if (p1SetWins > p2SetWins) {
                 player1Div.classList.add('winner');
-                winnerPlayerName = player1Select.value;
             } else if (p2SetWins > p1SetWins) {
                 player2Div.classList.add('winner');
-                winnerPlayerName = player2Select.value;
             }
 
-            // Update next round's TBD player
-            const matchId = match.getAttribute('data-match-id');
-            const bracketType = matchId.split('-')[0];
-            const matchRound = matchId.split('-')[1];
-            const matchNumber = matchId.split('-')[2];
-
-            if (winnerPlayerName && (p1SetWins >= 2 || p2SetWins >= 2)) {
-                let nextMatchIdSuffix = '';
-                let nextPlayerSlot = 0;
-
-                if (bracketType === 'mix') {
-                    if (matchRound === 'r16') {
-                        if (matchNumber === '1') { nextMatchIdSuffix = 'qf1'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '2') { nextMatchIdSuffix = 'qf2'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '3') { nextMatchIdSuffix = 'qf3'; nextPlayerSlot = 1; }
-                    } else if (matchRound === 'qf') {
-                        if (matchNumber === '1') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '2') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 2; }
-                        else if (matchNumber === '3') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '4') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 2; }
-                    } else if (matchRound === 'sf') {
-                        if (matchNumber === '1') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '2') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 2; }
-                    }
-                } else {
-                    if (matchRound === 'qf') {
-                        if (matchNumber === '1') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '2') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 2; }
-                        else if (matchNumber === '3') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '4') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 2; }
-                    } else if (matchRound === 'sf') {
-                        if (matchNumber === '1') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 1; }
-                        else if (matchNumber === '2') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 2; }
-                    }
-                }
-
-                if (nextMatchIdSuffix) {
-                    const nextMatchFullId = `${bracketType}-${nextMatchIdSuffix}`;
-                    const nextMatch = document.querySelector(`.match[data-match-id="${nextMatchFullId}"]`);
-                    if (nextMatch) {
-                        const nextPlayerSelect = nextMatch.querySelector(`.player[data-player="${nextPlayerSlot}"] .player-name-select`);
-                        if (nextPlayerSelect) {
-                            // Clear existing options and add the winner
-                            nextPlayerSelect.innerHTML = '';
-                            const winnerOption = document.createElement('option');
-                            winnerOption.value = winnerPlayerName;
-                            winnerOption.textContent = winnerPlayerName;
-                            nextPlayerSelect.appendChild(winnerOption);
-                            nextPlayerSelect.value = winnerPlayerName;
-                            nextPlayerSelect.disabled = true; // Disable selection as it's determined by previous match
-                        }
-                    }
-                }
-            }
+            // *** LOGIKA OTOMATISASI PENGISIAN PEMAIN DIHILANGKAN DI SINI ***
+            // Pemain harus dipilih secara manual di setiap babak.
 
             if (liveMatchId === match.getAttribute('data-match-id')) {
                 let activeSetFound = false;
@@ -1379,14 +1250,15 @@
                     const isWinner2 = player2Select.closest('.player').classList.contains('winner');
 
                     matchesData[matchId] = {
-                        player1: player1Select ? player1Select.value : 'TBD',
-                        player2: player2Select ? player2Select.value : 'TBD',
+                        player1: player1Select ? player1Select.value : '', // Save empty string if no player selected
+                        player2: player2Select ? player2Select.value : '', // Save empty string if no player selected
                         scores1: p1Scores,
                         scores2: p2Scores,
                         isWinner1: isWinner1,
                         isWinner2: isWinner2,
-                        player1Disabled: player1Select ? player1Select.disabled : false,
-                        player2Disabled: player2Select ? player2Select.disabled : false
+                        // player1Disabled and player2Disabled are now always false as all dropdowns are manual
+                        player1Disabled: false,
+                        player2Disabled: false
                     };
                 });
                 allBracketData[bracketId] = matchesData;
@@ -1416,24 +1288,40 @@
                                 const player2Div = match.querySelector('.player[data-player="2"]');
 
                                 if (player1Select) {
-                                    // Clear existing options before adding the saved player
-                                    player1Select.innerHTML = '';
-                                    const option1 = document.createElement('option');
-                                    option1.value = data.player1;
-                                    option1.textContent = data.player1;
-                                    player1Select.appendChild(option1);
+                                    // Ensure the option exists before setting value
+                                    let optionExists = false;
+                                    for (let i = 0; i < player1Select.options.length; i++) {
+                                        if (player1Select.options[i].value === data.player1) {
+                                            optionExists = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!optionExists && data.player1) { // Add option if it doesn't exist and player1 is not empty
+                                        const newOption = document.createElement('option');
+                                        newOption.value = data.player1;
+                                        newOption.textContent = data.player1;
+                                        player1Select.appendChild(newOption);
+                                    }
                                     player1Select.value = data.player1;
-                                    player1Select.disabled = data.player1Disabled;
+                                    // player1Select.disabled = data.player1Disabled; // No longer needed as all are enabled
                                 }
                                 if (player2Select) {
-                                    // Clear existing options before adding the saved player
-                                    player2Select.innerHTML = '';
-                                    const option2 = document.createElement('option');
-                                    option2.value = data.player2;
-                                    option2.textContent = data.player2;
-                                    player2Select.appendChild(option2);
+                                    // Ensure the option exists before setting value
+                                    let optionExists = false;
+                                    for (let i = 0; i < player2Select.options.length; i++) {
+                                        if (player2Select.options[i].value === data.player2) {
+                                            optionExists = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!optionExists && data.player2) { // Add option if it doesn't exist and player2 is not empty
+                                        const newOption = document.createElement('option');
+                                        newOption.value = data.player2;
+                                        newOption.textContent = data.player2;
+                                        player2Select.appendChild(newOption);
+                                    }
                                     player2Select.value = data.player2;
-                                    player2Select.disabled = data.player2Disabled;
+                                    // player2Select.disabled = data.player2Disabled; // No longer needed as all are enabled
                                 }
 
                                 p1ScoreInputs.forEach((input, i) => {
