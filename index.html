@@ -768,14 +768,14 @@
     <!-- Kontrol Autentikasi -->
     <div class="auth-controls">
         <span id="admin-status" class="admin-status hidden"></span>
-        <button id="toggle-email-auth" onclick="toggleEmailAuth()">Login/Sign Up</button>
+        <button id="toggle-email-auth" onclick="toggleEmailAuth()">Login</button>
         <button id="logout-button" onclick="signOutUser()" class="hidden">Logout</button>
 
         <div id="email-password-auth" class="hidden flex flex-col items-end gap-2 mt-2 w-full">
             <input type="email" id="email-input" placeholder="Email" class="p-2 border rounded-md w-full">
             <input type="password" id="password-input" placeholder="Password" class="p-2 border rounded-md w-full">
             <div class="flex gap-2 w-full justify-end">
-                <button id="signup-button" onclick="signUpWithEmailPassword()" class="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-md">Sign Up</button>
+                <!-- Tombol Sign Up dihapus -->
                 <button id="signin-email-button" onclick="signInWithEmailPassword()" class="bg-green-600 hover:bg-green-700 text-white p-2 rounded-md">Sign In</button>
             </div>
         </div>
@@ -1447,27 +1447,6 @@
             document.querySelectorAll('.player-name-select').forEach(select => {
                 select.disabled = disabled;
             });
-        }
-
-        // Fungsi untuk pendaftaran dengan Email/Password
-        async function signUpWithEmailPassword() {
-            const email = document.getElementById('email-input').value;
-            const password = document.getElementById('password-input').value;
-
-            if (!email || !password) {
-                alert("Please enter both email and password.");
-                return;
-            }
-
-            try {
-                await auth.createUserWithEmailAndPassword(email, password);
-                console.log("User signed up with email/password.");
-                alert("Registration successful! You are now logged in.");
-                document.getElementById('email-password-auth').classList.add('hidden');
-            } catch (error) {
-                console.error("Error signing up with email/password:", error);
-                alert("Registration failed: " + error.message);
-            }
         }
 
         // Fungsi untuk login dengan Email/Password
