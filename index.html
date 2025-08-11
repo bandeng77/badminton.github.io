@@ -1422,14 +1422,26 @@
             });
         }
 
-        // Fungsi untuk login dengan Google
-        async function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
+       async function signInAdmin() {
+            const emailInput = document.getElementById('admin@genetek.co.id');
+            const passwordInput = document.getElementById('Admin12345');
+
+            const email = emailInput.value;
+            const password = passwordInput.value;
+
+            if (!email || !password) {
+                alert("Email dan Password harus diisi.");
+                return;
+            }
+
             try {
-                await auth.signInWithPopup(provider);
-                console.log("User signed in with Google.");
+                await auth.signInWithEmailAndPassword(email, password);
+                console.log("User signed in with Email/Password.");
+                // Bersihkan input setelah login berhasil
+                emailInput.value = '';
+                passwordInput.value = '';
             } catch (error) {
-                console.error("Error signing in with Google:", error);
+                console.error("Error signing in with Email/Password:", error);
                 alert("Login failed: " + error.message);
             }
         }
