@@ -945,6 +945,7 @@
 
         // Initialize tournament
         async function initTournament() {
+            console.log("Initializing tournament...");
             // Add event listeners to all score inputs
             document.querySelectorAll('.score-input').forEach(input => {
                 input.addEventListener('change', updateWinner);
@@ -962,14 +963,18 @@
             populateAllPlayerDropdowns();
 
             await loadData(); // Load data when the tournament initializes
+            console.log("Data loaded. Checking current tab...");
 
             // Ensure the correct tab is active after loading data
-            const savedTab = localStorage.getItem('currentTab'); // Still use localStorage for current tab
+            const savedTab = localStorage.getItem('currentTab');
             if (savedTab) {
                 changeTab(savedTab);
+                console.log(`Switched to saved tab: ${savedTab}`);
             } else {
                 changeTab('singles'); // Default to singles if no saved tab
+                console.log("No saved tab found, defaulting to singles.");
             }
+            console.log("Tournament initialization complete.");
         }
 
         // Function to populate player dropdowns for all brackets
@@ -979,11 +984,14 @@
                 if (!bracketElement) return;
 
                 bracketElement.querySelectorAll('.match').forEach(match => {
-                    const matchId = match.getAttribute('data-match-id');
+                    // Check if the match element actually contains player selects
                     const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
                     const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
 
-                    if (!player1Select || !player2Select) return;
+                    // Skip if this match element is a placeholder without player selects
+                    if (!player1Select || !player2Select) {
+                        return;
+                    }
 
                     player1Select.innerHTML = '';
                     player2Select.innerHTML = '';
@@ -1002,7 +1010,6 @@
                     if (bracketType === 'singles') {
                         playersToPopulate = allPlayers;
                     } else if (bracketType === 'doubles') {
-                        // For doubles, we'll use a combined list of all initial doubles players
                         playersToPopulate = [
                             'RAKA & ACHMAD FADIL ', 'PUTRA & HARYO',
                             'EDWIN & WAHYU YIB', 'RANGGA & ANDI SUROSO',
@@ -1026,6 +1033,7 @@
                     });
 
                     // Set initial players for matches if they exist in initialPlayerAssignments
+                    const matchId = match.getAttribute('data-match-id');
                     if (bracketType === 'singles' && matchId.includes('qf')) {
                         const initialPlayers = initialPlayerAssignments['singles'][matchId.split('-')[1]];
                         if (initialPlayers) {
@@ -1108,6 +1116,7 @@
             const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
             const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
 
+            // Ensure player selects exist before trying to read their values
             document.getElementById('live-player-1').textContent = player1Select ? player1Select.value : 'N/A';
             document.getElementById('live-player-2').textContent = player2Select ? player2Select.value : 'N/A';
 
@@ -1147,6 +1156,13 @@
             const player1 = match.querySelector('.player[data-player="1"]');
             const player2 = match.querySelector('.player[data-player="2"]');
 
+            // Ensure player elements exist before trying to get score inputs
+            if (!player1 || !player2) {
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                return;
+            }
+
             const p1ScoreInput = player1.querySelector(`.score-input[data-set="${currentSet}"]`);
             const p2ScoreInput = player2.querySelector(`.score-input[data-set="${currentSet}"]`);
 
@@ -1179,6 +1195,11 @@
             const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
             const player1Div = match.querySelector('.player[data-player="1"]');
             const player2Div = match.querySelector('.player[data-player="2"]');
+
+            // Skip if this match element is a placeholder without player selects
+            if (!player1Select || !player2Select) {
+                return;
+            }
 
             const p1Scores = Array.from(match.querySelectorAll('.player[data-player="1"] .score-input')).map(input => parseInt(input.value));
             const p2Scores = Array.from(match.querySelectorAll('.player[data-player="2"] .score-input')).map(input => parseInt(input.value));
@@ -1232,6 +1253,7 @@
 
         // Function to save all bracket data to Firestore
         async function saveData() {
+            console.log("Attempting to save data...");
             const allBracketData = {};
             document.querySelectorAll('.bracket').forEach(bracketElement => {
                 const bracketId = bracketElement.id;
@@ -1240,41 +1262,52 @@
                     const matchId = match.getAttribute('data-match-id');
                     const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
                     const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+                    // Skip this match if it's a placeholder without player selects
+                    if (!player1Select || !player2Select) {
+                        matchesData[matchId] = {
+                            isPlaceholder: true // Mark as placeholder
+                        };
+                        return;
+                    }
+
                     const p1Scores = Array.from(match.querySelectorAll('.player[data-player="1"] .score-input')).map(input => parseInt(input.value));
                     const p2Scores = Array.from(match.querySelectorAll('.player[data-player="2"] .score-input')).map(input => parseInt(input.value));
                     const isWinner1 = player1Select.closest('.player').classList.contains('winner');
                     const isWinner2 = player2Select.closest('.player').classList.contains('winner');
 
                     matchesData[matchId] = {
-                        player1: player1Select ? player1Select.value : '',
-                        player2: player2Select ? player2Select.value : '',
+                        player1: player1Select.value,
+                        player2: player2Select.value,
                         scores1: p1Scores,
                         scores2: p2Scores,
                         isWinner1: isWinner1,
                         isWinner2: isWinner2,
-                        player1Disabled: false, // Always false as per new logic
-                        player2Disabled: false  // Always false as per new logic
+                        player1Disabled: false,
+                        player2Disabled: false
                     };
                 });
                 allBracketData[bracketId] = matchesData;
             });
 
+            console.log("Data to be saved:", allBracketData);
+
             try {
-                // Save the entire bracket data as a single document in Firestore
-                // You might want to use a specific document ID, e.g., 'tournamentData'
                 await db.collection('tournamentData').doc('currentBracket').set(allBracketData);
                 console.log("Data successfully written to Firestore!");
             } catch (error) {
-                console.error("Error writing document: ", error);
+                console.error("Error writing document to Firestore: ", error);
             }
         }
 
         // Function to load all bracket data from Firestore
         async function loadData() {
+            console.log("Attempting to load data from Firestore...");
             try {
                 const doc = await db.collection('tournamentData').doc('currentBracket').get();
                 if (doc.exists) {
                     const allBracketData = doc.data();
+                    console.log("Data successfully loaded from Firestore:", allBracketData);
                     for (const bracketId in allBracketData) {
                         const bracketElement = document.getElementById(bracketId);
                         if (bracketElement) {
@@ -1283,6 +1316,12 @@
                                 const match = bracketElement.querySelector(`.match[data-match-id="${matchId}"]`);
                                 if (match) {
                                     const data = matchesData[matchId];
+
+                                    // Skip if this is a placeholder match
+                                    if (data.isPlaceholder) {
+                                        continue;
+                                    }
+
                                     const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
                                     const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
                                     const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
@@ -1290,8 +1329,8 @@
                                     const player1Div = match.querySelector('.player[data-player="1"]');
                                     const player2Div = match.querySelector('.player[data-player="2"]');
 
+                                    // Ensure player selects exist before trying to set values
                                     if (player1Select) {
-                                        // Ensure the option exists before setting value
                                         let optionExists = false;
                                         for (let i = 0; i < player1Select.options.length; i++) {
                                             if (player1Select.options[i].value === data.player1) {
@@ -1308,7 +1347,6 @@
                                         player1Select.value = data.player1;
                                     }
                                     if (player2Select) {
-                                        // Ensure the option exists before setting value
                                         let optionExists = false;
                                         for (let i = 0; i < player2Select.options.length; i++) {
                                             if (player2Select.options[i].value === data.player2) {
@@ -1336,28 +1374,28 @@
                                         }
                                     });
 
-                                    if (data.isWinner1) {
+                                    // Only apply winner class if playerDivs exist
+                                    if (player1Div && data.isWinner1) {
                                         player1Div.classList.add('winner');
-                                    } else {
+                                    } else if (player1Div) {
                                         player1Div.classList.remove('winner');
                                     }
-                                    if (data.isWinner2) {
+                                    if (player2Div && data.isWinner2) {
                                         player2Div.classList.add('winner');
-                                    } else {
+                                    } else if (player2Div) {
                                         player2Div.classList.remove('winner');
                                     }
                                 }
                             }
                         }
                     }
-                    console.log("Data successfully loaded from Firestore!");
+                    console.log("Data loading and UI update complete.");
                 } else {
-                    console.log("No such document in Firestore! Initializing with default data.");
-                    // If no data exists in Firestore, save the initial assignments
-                    await saveData();
+                    console.log("No 'currentBracket' document found in 'tournamentData' collection. Saving initial data.");
+                    await saveData(); // Save initial data if document doesn't exist
                 }
             } catch (error) {
-                console.error("Error getting document: ", error);
+                console.error("Error getting document from Firestore: ", error);
             }
         }
 
