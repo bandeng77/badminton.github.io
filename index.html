@@ -50,9 +50,9 @@
             justify-content: space-between;
             align-items: center;
             padding: 0.75rem 0.5rem;
-            border-bottom: 1px solid #e2e8f0;
             /* Added for player name wrapping */
             flex-wrap: wrap;
+            border-bottom: 1px solid #e2e8f0;
         }
 
         .player:last-child {
@@ -884,8 +884,7 @@
 
     <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <!-- Add other Firebase services you need, e.g., Firestore -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script> -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
 
     <script>
         // Firebase Configuration
@@ -900,7 +899,7 @@
 
         // Initialize Firebase
         const app = firebase.initializeApp(firebaseConfig);
-        // const db = firebase.firestore(); // If you plan to use Firestore
+        const db = firebase.firestore(); // Inisialisasi Firestore
 
         // Global variables
         let currentTab = 'singles';
@@ -945,7 +944,7 @@
         };
 
         // Initialize tournament
-        function initTournament() {
+        async function initTournament() {
             // Add event listeners to all score inputs
             document.querySelectorAll('.score-input').forEach(input => {
                 input.addEventListener('change', updateWinner);
@@ -962,10 +961,10 @@
             // Populate initial player dropdowns for all brackets before loading data
             populateAllPlayerDropdowns();
 
-            loadData(); // Load data when the tournament initializes
+            await loadData(); // Load data when the tournament initializes
 
             // Ensure the correct tab is active after loading data
-            const savedTab = localStorage.getItem('currentTab');
+            const savedTab = localStorage.getItem('currentTab'); // Still use localStorage for current tab
             if (savedTab) {
                 changeTab(savedTab);
             } else {
@@ -1071,7 +1070,7 @@
             document.getElementById('mix-doubles-bracket').classList.add('hidden');
 
             document.getElementById(`${tab}-bracket`).classList.remove('hidden');
-            localStorage.setItem('currentTab', tab); // Save current tab
+            localStorage.setItem('currentTab', tab); // Save current tab to localStorage
         }
 
         function toggleLiveScore(matchId) {
@@ -1208,9 +1207,6 @@
                 player2Div.classList.add('winner');
             }
 
-            // *** LOGIKA OTOMATISASI PENGISIAN PEMAIN DIHILANGKAN DI SINI ***
-            // Pemain harus dipilih secara manual di setiap babak.
-
             if (liveMatchId === match.getAttribute('data-match-id')) {
                 let activeSetFound = false;
                 for (let i = 0; i < p1Scores.length; i++) {
@@ -1234,8 +1230,8 @@
             saveData(); // Save data after any update
         }
 
-        // Function to save all bracket data to localStorage
-        function saveData() {
+        // Function to save all bracket data to Firestore
+        async function saveData() {
             const allBracketData = {};
             document.querySelectorAll('.bracket').forEach(bracketElement => {
                 const bracketId = bracketElement.id;
@@ -1250,105 +1246,118 @@
                     const isWinner2 = player2Select.closest('.player').classList.contains('winner');
 
                     matchesData[matchId] = {
-                        player1: player1Select ? player1Select.value : '', // Save empty string if no player selected
-                        player2: player2Select ? player2Select.value : '', // Save empty string if no player selected
+                        player1: player1Select ? player1Select.value : '',
+                        player2: player2Select ? player2Select.value : '',
                         scores1: p1Scores,
                         scores2: p2Scores,
                         isWinner1: isWinner1,
                         isWinner2: isWinner2,
-                        // player1Disabled and player2Disabled are now always false as all dropdowns are manual
-                        player1Disabled: false,
-                        player2Disabled: false
+                        player1Disabled: false, // Always false as per new logic
+                        player2Disabled: false  // Always false as per new logic
                     };
                 });
                 allBracketData[bracketId] = matchesData;
             });
-            localStorage.setItem('tournamentBracketData', JSON.stringify(allBracketData));
-            localStorage.setItem('currentTab', currentTab);
+
+            try {
+                // Save the entire bracket data as a single document in Firestore
+                // You might want to use a specific document ID, e.g., 'tournamentData'
+                await db.collection('tournamentData').doc('currentBracket').set(allBracketData);
+                console.log("Data successfully written to Firestore!");
+            } catch (error) {
+                console.error("Error writing document: ", error);
+            }
         }
 
-        // Function to load all bracket data from localStorage
-        function loadData() {
-            const savedData = localStorage.getItem('tournamentBracketData');
-            if (savedData) {
-                const allBracketData = JSON.parse(savedData);
-                for (const bracketId in allBracketData) {
-                    const bracketElement = document.getElementById(bracketId);
-                    if (bracketElement) {
-                        const matchesData = allBracketData[bracketId];
-                        for (const matchId in matchesData) {
-                            const match = bracketElement.querySelector(`.match[data-match-id="${matchId}"]`);
-                            if (match) {
-                                const data = matchesData[matchId];
-                                const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
-                                const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
-                                const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
-                                const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
-                                const player1Div = match.querySelector('.player[data-player="1"]');
-                                const player2Div = match.querySelector('.player[data-player="2"]');
+        // Function to load all bracket data from Firestore
+        async function loadData() {
+            try {
+                const doc = await db.collection('tournamentData').doc('currentBracket').get();
+                if (doc.exists) {
+                    const allBracketData = doc.data();
+                    for (const bracketId in allBracketData) {
+                        const bracketElement = document.getElementById(bracketId);
+                        if (bracketElement) {
+                            const matchesData = allBracketData[bracketId];
+                            for (const matchId in matchesData) {
+                                const match = bracketElement.querySelector(`.match[data-match-id="${matchId}"]`);
+                                if (match) {
+                                    const data = matchesData[matchId];
+                                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                                    const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
+                                    const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
+                                    const player1Div = match.querySelector('.player[data-player="1"]');
+                                    const player2Div = match.querySelector('.player[data-player="2"]');
 
-                                if (player1Select) {
-                                    // Ensure the option exists before setting value
-                                    let optionExists = false;
-                                    for (let i = 0; i < player1Select.options.length; i++) {
-                                        if (player1Select.options[i].value === data.player1) {
-                                            optionExists = true;
-                                            break;
+                                    if (player1Select) {
+                                        // Ensure the option exists before setting value
+                                        let optionExists = false;
+                                        for (let i = 0; i < player1Select.options.length; i++) {
+                                            if (player1Select.options[i].value === data.player1) {
+                                                optionExists = true;
+                                                break;
+                                            }
                                         }
-                                    }
-                                    if (!optionExists && data.player1) { // Add option if it doesn't exist and player1 is not empty
-                                        const newOption = document.createElement('option');
-                                        newOption.value = data.player1;
-                                        newOption.textContent = data.player1;
-                                        player1Select.appendChild(newOption);
-                                    }
-                                    player1Select.value = data.player1;
-                                    // player1Select.disabled = data.player1Disabled; // No longer needed as all are enabled
-                                }
-                                if (player2Select) {
-                                    // Ensure the option exists before setting value
-                                    let optionExists = false;
-                                    for (let i = 0; i < player2Select.options.length; i++) {
-                                        if (player2Select.options[i].value === data.player2) {
-                                            optionExists = true;
-                                            break;
+                                        if (!optionExists && data.player1) {
+                                            const newOption = document.createElement('option');
+                                            newOption.value = data.player1;
+                                            newOption.textContent = data.player1;
+                                            player1Select.appendChild(newOption);
                                         }
+                                        player1Select.value = data.player1;
                                     }
-                                    if (!optionExists && data.player2) { // Add option if it doesn't exist and player2 is not empty
-                                        const newOption = document.createElement('option');
-                                        newOption.value = data.player2;
-                                        newOption.textContent = data.player2;
-                                        player2Select.appendChild(newOption);
+                                    if (player2Select) {
+                                        // Ensure the option exists before setting value
+                                        let optionExists = false;
+                                        for (let i = 0; i < player2Select.options.length; i++) {
+                                            if (player2Select.options[i].value === data.player2) {
+                                                optionExists = true;
+                                                break;
+                                            }
+                                        }
+                                        if (!optionExists && data.player2) {
+                                            const newOption = document.createElement('option');
+                                            newOption.value = data.player2;
+                                            newOption.textContent = data.player2;
+                                            player2Select.appendChild(newOption);
+                                        }
+                                        player2Select.value = data.player2;
                                     }
-                                    player2Select.value = data.player2;
-                                    // player2Select.disabled = data.player2Disabled; // No longer needed as all are enabled
-                                }
 
-                                p1ScoreInputs.forEach((input, i) => {
-                                    if (data.scores1 && data.scores1[i] !== undefined) {
-                                        input.value = data.scores1[i];
-                                    }
-                                });
-                                p2ScoreInputs.forEach((input, i) => {
-                                    if (data.scores2 && data.scores2[i] !== undefined) {
-                                        input.value = data.scores2[i];
-                                    }
-                                });
+                                    p1ScoreInputs.forEach((input, i) => {
+                                        if (data.scores1 && data.scores1[i] !== undefined) {
+                                            input.value = data.scores1[i];
+                                        }
+                                    });
+                                    p2ScoreInputs.forEach((input, i) => {
+                                        if (data.scores2 && data.scores2[i] !== undefined) {
+                                            input.value = data.scores2[i];
+                                        }
+                                    });
 
-                                if (data.isWinner1) {
-                                    player1Div.classList.add('winner');
-                                } else {
-                                    player1Div.classList.remove('winner');
-                                }
-                                if (data.isWinner2) {
-                                    player2Div.classList.add('winner');
-                                } else {
-                                    player2Div.classList.remove('winner');
+                                    if (data.isWinner1) {
+                                        player1Div.classList.add('winner');
+                                    } else {
+                                        player1Div.classList.remove('winner');
+                                    }
+                                    if (data.isWinner2) {
+                                        player2Div.classList.add('winner');
+                                    } else {
+                                        player2Div.classList.remove('winner');
+                                    }
                                 }
                             }
                         }
                     }
+                    console.log("Data successfully loaded from Firestore!");
+                } else {
+                    console.log("No such document in Firestore! Initializing with default data.");
+                    // If no data exists in Firestore, save the initial assignments
+                    await saveData();
                 }
+            } catch (error) {
+                console.error("Error getting document: ", error);
             }
         }
 
