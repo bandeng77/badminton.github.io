@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Admin Panel - Badminton Tournament</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+</head>
+<body class="bg-gray-100">
+
+<div class="p-4 bg-white shadow flex justify-between">
+    <h1 class="text-xl font-bold">🏸 Admin Panel - Badminton Tournament</h1>
+    <button onclick="logoutAdmin()" class="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+</div>
+
+<div id="content" class="p-6 hidden">
+    <p class="mb-4 text-gray-600">Anda login sebagai admin, silakan edit data pertandingan di bawah.</p>
+    <!-- Copy struktur bracket kamu dari index.html ke sini -->
+    <div id="bracket-container">
+        <!-- TODO: Copy seluruh HTML bracket dari index (22).html di sini -->
+    </div>
+</div>
+
+<div id="login-form" class="p-6 flex flex-col items-center justify-center min-h-screen">
+    <h2 class="text-lg font-bold mb-4">Login Admin</h2>
+    <input id="email" type="email" placeholder="Email" class="border p-2 rounded mb-2 w-64" />
+    <input id="password" type="password" placeholder="Password" class="border p-2 rounded mb-4 w-64" />
+    <button onclick="loginAdmin()" class="bg-green-500 text-white px-4 py-2 rounded">Login</button>
+    <p id="error" class="text-red-500 mt-2"></p>
+</div>
+
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyCgXWrv-yNSGV1cCzMghgNksY1XNHAfl38",
+    authDomain: "badmintonefk.firebaseapp.com",
+    projectId: "badmintonefk",
+    storageBucket: "badmintonefk.firebasestorage.app",
+    messagingSenderId: "987525154148",
+    appId: "1:987525154148:web:faba3301c884e9cf6a2671"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+function loginAdmin() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    if (email !== "admin@genetek.co.id") {
+        document.getElementById("error").innerText = "Email tidak terdaftar sebagai admin.";
+        return;
+    }
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+            document.getElementById("error").innerText = "";
+        })
+        .catch(err => {
+            document.getElementById("error").innerText = err.message;
+        });
+}
+
+function logoutAdmin() {
+    auth.signOut();
+}
+
+auth.onAuthStateChanged(user => {
+    if (user && user.email === "admin@genetek.co.id") {
+        document.getElementById("login-form").classList.add("hidden");
+        document.getElementById("content").classList.remove("hidden");
+    } else {
+        document.getElementById("login-form").classList.remove("hidden");
+        document.getElementById("content").classList.add("hidden");
+    }
+});
+</script>
+</body>
+</html>
