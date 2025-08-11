@@ -215,19 +215,25 @@
             align-items: center;
             position: relative;
             z-index: 1;
-            gap: 2rem; /* Jarak antar round */
+            gap: 0.5rem; /* Mengurangi jarak antar round lebih lanjut */
+            max-width: 100%; /* Pastikan bracket tidak melebihi lebar viewport */
+            box-sizing: border-box;
         }
 
         .round {
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            margin: 0 1rem;
+            margin: 0 0.25rem; /* Mengurangi margin horizontal lebih lanjut */
             min-height: 500px;
             background: rgba(255, 255, 255, 0.1); /* Latar belakang transparan untuk round */
             border-radius: 15px;
             padding: 1rem;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.5); /* Efek kaca */
+            flex-grow: 1; /* Memungkinkan round untuk tumbuh mengisi ruang */
+            flex-basis: 0; /* Penting untuk flex-grow agar bekerja dengan baik */
+            min-width: 200px; /* Lebar minimum untuk round */
+            max-width: 280px; /* Lebar maksimum untuk round */
         }
 
         .match {
@@ -236,11 +242,13 @@
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Bayangan lebih kuat */
             margin: 1rem 0;
             padding: 1.2rem; /* Padding lebih besar */
-            width: 320px; /* Lebih lebar */
+            width: 100%; /* Match mengisi lebar round */
+            max-width: 280px; /* Batasi lebar maksimum match */
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi lebih halus */
             position: relative;
             border: 2px solid #FFD700; /* Border emas */
             overflow: hidden; /* Untuk efek kilau */
+            box-sizing: border-box;
         }
 
         .match::before { /* Efek kilau */
@@ -341,16 +349,17 @@
         }
 
         /* Connector styles for bracket lines */
-        .qf-sf-connector, .sf-final-connector {
+        .qf-sf-connector, .sf-final-connector, .r16-qf-connector {
             position: relative;
-            width: 60px; /* Lebih lebar */
+            width: 60px; /* Lebar konektor */
             display: flex;
             flex-direction: column;
             justify-content: space-around;
             align-items: center;
+            flex-shrink: 0; /* Pastikan konektor tidak menyusut */
         }
 
-        .qf-sf-connector .h-line, .sf-final-connector .h-line {
+        .qf-sf-connector .h-line, .sf-final-connector .h-line, .r16-qf-connector .h-line {
             height: 3px; /* Lebih tebal */
             width: 100%;
             background-color: #8B0000; /* Merah gelap */
@@ -359,7 +368,7 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Bayangan pada garis */
         }
 
-        .qf-sf-connector .v-line, .sf-final-connector .v-line {
+        .qf-sf-connector .v-line, .sf-final-connector .v-line, .r16-qf-connector .v-line {
             width: 3px; /* Lebih tebal */
             background-color: #8B0000; /* Merah gelap */
             position: absolute;
@@ -369,18 +378,35 @@
         }
 
         /* Penyesuaian posisi garis agar sesuai dengan ukuran match yang lebih besar */
-        .qf-sf-connector .v-line-top {
-            top: calc(1rem + 1px);
-            height: calc(50% - 1rem - 1px + 1.2rem); /* Menyesuaikan padding match */
+        /* Menggunakan calc() dengan variabel CSS atau nilai yang lebih adaptif */
+        .qf-sf-connector .v-line-top, .r16-qf-connector .v-line-top {
+            top: calc(1rem + 1px); /* Padding match + border */
+            height: calc(50% - 1rem - 1px + 1.2rem); /* Setengah tinggi round - padding - border + match padding */
         }
 
-        .qf-sf-connector .v-line-bottom {
-            bottom: calc(1rem + 1px);
-            height: calc(50% - 1rem - 1px + 1.2rem); /* Menyesuaikan padding match */
+        .qf-sf-connector .v-line-bottom, .r16-qf-connector .v-line-bottom {
+            bottom: calc(1rem + 1px); /* Padding match + border */
+            height: calc(50% - 1rem - 1px + 1.2rem); /* Setengah tinggi round - padding - border + match padding */
         }
 
         .sf-final-connector .v-line {
-            height: calc(100% - 2rem - 2px);
+            height: calc(100% - 2rem - 2px); /* Tinggi round - 2*padding - 2*border */
+        }
+
+        /* Specific adjustments for mix-doubles R16 to QF connector */
+        /* Ini perlu disesuaikan jika tinggi match berubah */
+        #mix-doubles-bracket .r16-qf-connector .h-line.top-match {
+            /* Posisi vertikal untuk match pertama di QF */
+            top: calc(1rem + 1px + 50% - 1px);
+        }
+
+        #mix-doubles-bracket .r16-qf-connector .h-line.bottom-match {
+            /* Posisi vertikal untuk match kedua di QF */
+            /* Ini adalah perkiraan, mungkin perlu disesuaikan secara manual jika layout sangat dinamis */
+            top: calc(1rem + 1px + 50% + 1px + 2 * (1.2rem + 1rem + 1rem)); /* match padding + match margin-top + match margin-bottom */
+            /* Perhitungan yang lebih akurat: tinggi match + 2*margin match + 2*padding match */
+            /* Asumsi tinggi match sekitar 150px (termasuk padding dan margin) */
+            /* top: calc(1rem + 1px + 50% + 1px + 2 * (150px)); */
         }
 
         .live-indicator {
@@ -570,6 +596,7 @@
                 min-height: auto;
                 width: 100%;
                 padding: 0.8rem;
+                max-width: none; /* Hapus batasan lebar di mobile */
             }
 
             .match {
@@ -579,6 +606,7 @@
                 padding: 1rem;
                 border-radius: 10px;
                 border: 1px solid #FFD700;
+                max-width: none; /* Hapus batasan lebar di mobile */
             }
 
             .match:hover {
@@ -587,7 +615,8 @@
             }
 
             .qf-sf-connector,
-            .sf-final-connector {
+            .sf-final-connector,
+            .r16-qf-connector { /* Sembunyikan konektor di mobile */
                 display: none;
             }
 
@@ -760,7 +789,7 @@
         <!-- Connector Quarter Finals to Semi Finals -->
         <div class="qf-sf-connector">
             <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div>
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
             <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
             <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
         </div>
@@ -921,7 +950,7 @@
         <!-- Connector Quarter Finals to Semi Finals -->
         <div class="qf-sf-connector">
             <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div>
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
             <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
             <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
         </div>
@@ -1060,16 +1089,17 @@
                 </div>
             </div>
             <!-- Placeholder for Bye 1 -->
-            <div class="match" style="visibility: hidden; margin: 1rem 0;"></div>
+            <div class="match" data-match-id="mix-doubles-r16-bye1" style="visibility: hidden; margin: 1rem 0;"></div>
             <!-- Placeholder for Bye 2 -->
-            <div class="match" style="visibility: hidden; margin: 1rem 0;"></div>
+            <div class="match" data-match-id="mix-doubles-r16-bye2" style="visibility: hidden; margin: 1rem 0;"></div>
         </div>
 
         <!-- Connector Round of 16 to Quarter Finals -->
-        <div class="qf-sf-connector">
-            <!-- These lines need careful adjustment for 3 matches + 2 placeholders -->
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div> <!-- From R16-1/Bye -->
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div> <!-- From R16-2/R16-3 -->
+        <div class="r16-qf-connector">
+            <!-- Horizontal lines connecting to QF matches -->
+            <div class="h-line top-match" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="h-line bottom-match" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
+            <!-- Vertical lines connecting to R16 matches -->
             <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
             <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
         </div>
@@ -1157,7 +1187,7 @@
         <!-- Connector Quarter Finals to Semi Finals -->
         <div class="qf-sf-connector">
             <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div>
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
             <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
             <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
         </div>
@@ -1362,11 +1392,28 @@
             }
             console.log("Tournament initialization complete.");
 
+            // Set CSS variable for match height dynamically
+            setMatchHeightCssVariable();
+            window.addEventListener('resize', setMatchHeightCssVariable);
+
+
             // Start particle generation
             createParticles();
             // Start firework generation
             setInterval(createFirework, 5000); // Setiap 5 detik
         }
+
+        // Function to dynamically set CSS variable for match height
+        function setMatchHeightCssVariable() {
+            const sampleMatch = document.querySelector('.match');
+            if (sampleMatch) {
+                // Get the computed height including padding and border, but not margin
+                const matchHeight = sampleMatch.offsetHeight;
+                document.documentElement.style.setProperty('--match-height', `${matchHeight}px`);
+                console.log("Match height CSS variable set to:", matchHeight);
+            }
+        }
+
 
         // Function to create background particles
         function createParticles() {
