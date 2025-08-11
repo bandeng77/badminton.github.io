@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tournament Badminton Bracket</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            overflow-x: hidden;
+        }
+
+        .bracket {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+            align-items: center;
+        }
+
+        .round {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin: 0 1rem;
+            min-height: 500px;
+        }
+
+        .match {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 1rem 0;
+            padding: 1rem;
+            width: 300px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .match:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .player {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .player:last-child {
+            border-bottom: none;
+        }
+
+        .player.winner {
+            font-weight: 600;
+            color: #3b82f6;
+        }
+
+        .player-name-select {
+            flex-grow: 1;
+            margin-right: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            background-color: #f9fafb;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .score-container {
+            display: flex;
+            gap: 0.15rem;
+            align-items: center;
+        }
+
+        .score-input {
+            width: 38px;
+            height: 28px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            font-size: 0.9rem;
+            -moz-appearance: textfield;
+        }
+
+        .score-input::-webkit-outer-spin-button,
+        .score-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        /* Connector styles for bracket lines */
+        .connector-line {
+            position: relative;
+            height: 100%;
+            width: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .connector-line .line-segment {
+            background-color: #94a3b8;
+            position: absolute;
+        }
+
+        /* Horizontal lines */
+        .connector-line .h-line {
+            height: 2px;
+            width: 100%;
+            left: 0;
+        }
+
+        /* Vertical lines */
+        .connector-line .v-line {
+            width: 2px;
+            height: calc(50% + 1rem);
+            background-color: #94a3b8;
+            position: absolute;
+        }
+
+        /* Specific positioning for Quarter to Semi connectors */
+        .qf-sf-connector {
+            position: relative;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .qf-sf-connector .h-line {
+            height: 2px;
+            width: 100%;
+            background-color: #94a3b8;
+            position: absolute;
+            left: 0;
+        }
+
+        .qf-sf-connector .v-line {
+            width: 2px;
+            background-color: #94a3b8;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Top vertical line for first pair of QF */
+        .qf-sf-connector .v-line-top {
+            top: calc(1rem + 1px);
+            height: calc(100% - 2rem - 2px);
+        }
+
+        /* Bottom vertical line for second pair of QF */
+        .qf-sf-connector .v-line-bottom {
+            bottom: calc(1rem + 1px);
+            height: calc(100% - 2rem - 2px);
+        }
+
+        /* Specific positioning for Semi to Final connectors */
+        .sf-final-connector {
+            position: relative;
+            width: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sf-final-connector .h-line {
+            height: 2px;
+            width: 100%;
+            background-color: #94a3b8;
+            position: absolute;
+            left: 0;
+        }
+
+        .sf-final-connector .v-line {
+            width: 2px;
+            background-color: #94a3b8;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            height: calc(100% - 2rem - 2px);
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background-color: #ef4444;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(239, 68, 68, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tournament-title {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 2rem 0;
+            color: #1e293b;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .live-scoreboard {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            padding: 1rem;
+            max-width: 300px;
+            z-index: 100;
+        }
+
+        .live-scoreboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab.active {
+            border-bottom: 2px solid #3b82f6;
+            color: #3b82f6;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="tournament-title">Badminton Tournament Bracket</h1>
+
+    <div class="tabs">
+        <div class="tab active" onclick="changeTab('singles')">Men's Singles</div>
+        <div class="tab" onclick="changeTab('doubles')">Men's Doubles</div>
+        <div class="tab" onclick="changeTab('mix-doubles')">Mix Doubles</div>
+    </div>
+
+    <div id="singles-bracket" class="bracket">
+        <!-- Quarter Finals -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Quarter Finals</h3>
+            <div class="match" data-match-id="singles-qf1" onclick="toggleLiveScore('singles-qf1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="singles-qf2" onclick="toggleLiveScore('singles-qf2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="singles-qf3" onclick="toggleLiveScore('singles-qf3')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="singles-qf4" onclick="toggleLiveScore('singles-qf4')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector Quarter Finals to Semi Finals -->
+        <div class="qf-sf-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div>
+            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Semi Finals -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Semi Finals</h3>
+            <div class="match" data-match-id="singles-sf1" onclick="toggleLiveScore('singles-sf1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="singles-sf2" onclick="toggleLiveScore('singles-sf2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector Semi Finals to Final -->
+        <div class="sf-final-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Final -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Final</h3>
+            <div class="match" data-match-id="singles-final" onclick="toggleLiveScore('singles-final')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="doubles-bracket" class="bracket hidden">
+        <!-- Quarter Finals -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Quarter Finals</h3>
+            <div class="match" data-match-id="doubles-qf1" onclick="toggleLiveScore('doubles-qf1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="doubles-qf2" onclick="toggleLiveScore('doubles-qf2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="doubles-qf3" onclick="toggleLiveScore('doubles-qf3')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="doubles-qf4" onclick="toggleLiveScore('doubles-qf4')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector Quarter Finals to Semi Finals -->
+        <div class="qf-sf-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div>
+            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Semi Finals -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Semi Finals</h3>
+            <div class="match" data-match-id="doubles-sf1" onclick="toggleLiveScore('doubles-sf1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="doubles-sf2" onclick="toggleLiveScore('doubles-sf2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector Semi Finals to Final -->
+        <div class="sf-final-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Final -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Final</h3>
+            <div class="match" data-match-id="doubles-final" onclick="toggleLiveScore('doubles-final')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mix-doubles-bracket" class="bracket hidden">
+        <!-- Round of 16 (First Round for 11 players) -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Round of 16</h3>
+            <!-- Match 1 -->
+            <div class="match" data-match-id="mix-doubles-r16-1" onclick="toggleLiveScore('mix-doubles-r16-1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+            <!-- Match 2 -->
+            <div class="match" data-match-id="mix-doubles-r16-2" onclick="toggleLiveScore('mix-doubles-r16-2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+            <!-- Match 3 -->
+            <div class="match" data-match-id="mix-doubles-r16-3" onclick="toggleLiveScore('mix-doubles-r16-3')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+            <!-- Placeholder for Bye 1 -->
+            <div class="match" style="visibility: hidden; margin: 1rem 0;"></div>
+            <!-- Placeholder for Bye 2 -->
+            <div class="match" style="visibility: hidden; margin: 1rem 0;"></div>
+        </div>
+
+        <!-- Connector Round of 16 to Quarter Finals -->
+        <div class="qf-sf-connector">
+            <!-- These lines need careful adjustment for 3 matches + 2 placeholders -->
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div> <!-- From R16-1/Bye -->
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div> <!-- From R16-2/R16-3 -->
+            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Quarter Finals -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Quarter Finals</h3>
+            <div class="match" data-match-id="mix-doubles-qf1" onclick="toggleLiveScore('mix-doubles-qf1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="mix-doubles-qf2" onclick="toggleLiveScore('mix-doubles-qf2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="mix-doubles-qf3" onclick="toggleLiveScore('mix-doubles-qf3')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="mix-doubles-qf4" onclick="toggleLiveScore('mix-doubles-qf4')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector Quarter Finals to Semi Finals -->
+        <div class="qf-sf-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2*300px + 2*2rem);"></div>
+            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Semi Finals -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Semi Finals</h3>
+            <div class="match" data-match-id="mix-doubles-sf1" onclick="toggleLiveScore('mix-doubles-sf1')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+
+            <div class="match" data-match-id="mix-doubles-sf2" onclick="toggleLiveScore('mix-doubles-sf2')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector Semi Finals to Final -->
+        <div class="sf-final-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- Final -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">Final</h3>
+            <div class="match" data-match-id="mix-doubles-final" onclick="toggleLiveScore('mix-doubles-final')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2"></select>
+                    <div class="score-container">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="1">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="2">
+                        <input type="number" class="score-input" value="0" min="0" max="30" data-set="3">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="live-scoreboard" class="live-scoreboard hidden">
+        <div class="live-scoreboard-header">
+            <h3 class="font-semibold">Live Match</h3>
+            <button onclick="closeLiveScore()" class="text-gray-500 hover:text-gray-700">×</button>
+        </div>
+        <div id="live-match-content">
+            <div class="player flex justify-between items-center mb-2">
+                <div class="flex items-center">
+                    <span id="live-player-1">Player 1</span>
+                </div>
+                <div class="flex gap-2" id="live-scores-1"></div>
+            </div>
+            <div class="player flex justify-between items-center">
+                <div class="flex items-center">
+                    <span id="live-player-2">Player 2</span>
+                </div>
+                <div class="flex gap-2" id="live-scores-2"></div>
+            </div>
+            <div class="progress-bar-container mt-3 bg-gray-200 rounded-full h-2.5">
+                <div id="progress-bar" class="bg-blue-500 h-2.5 rounded-full" style="width: 0%"></div>
+            </div>
+            <div class="flex justify-between mt-1 text-sm">
+                <span id="current-set">Set 1</span>
+                <span id="match-status">Playing</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentTab = 'singles';
+        let liveMatchId = null;
+        let matchInterval = null;
+        let currentSet = 1;
+        let player1Score = 0;
+        let player2Score = 0;
+
+        // Daftar pemain yang tersedia
+        const allPlayers = [
+            "Alice", "Bob", "Charlie", "David", "Eve", "Frank", "Grace", "Heidi",
+            "Ivan", "Judy", "Kevin", "Liam", "Mia", "Noah", "Olivia", "Peter"
+        ];
+
+        // Initial player assignments for each bracket type
+        const initialPlayerAssignments = {
+            'singles': {
+                'qf1': ['Alice', 'Bob'],
+                'qf2': ['Charlie', 'David'],
+                'qf3': ['Eve', 'Frank'],
+                'qf4': ['Grace', 'Heidi']
+            },
+            'doubles': {
+                'qf1': ['Team A', 'Team B'],
+                'qf2': ['Team C', 'Team D'],
+                'qf3': ['Team E', 'Team F'],
+                'qf4': ['Team G', 'Team H']
+            },
+            'mix-doubles': {
+                // 11 players: 5 byes, 3 matches in Round of 16
+                // Players: M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11
+                // Byes: B1, B2, B3, B4, B5
+                // R16 matches:
+                // (M1 vs M2) -> QF1
+                // (M3 vs M4) -> QF2
+                // (M5 vs M6) -> QF3
+                // (M7 vs M8) -> QF4
+                // (M9 vs M10) -> QF5
+                // (M11 vs Bye) -> QF6
+                // (Bye vs Bye) -> QF7
+                // (Bye vs Bye) -> QF8
+
+                // Let's assign 11 players to the R16 matches and 5 byes
+                // The 5 byes will automatically advance to QF.
+                // We need 3 matches in R16, and 5 byes.
+                // Total 16 slots in a full bracket. 11 players means 5 byes.
+                // The 5 byes will be placed strategically.
+                // For simplicity, let's assign 6 players to 3 matches, and 5 players get byes.
+
+                // R16 matches (3 matches)
+                'r16-1': ['Mix A', 'Mix B'], // Winner goes to QF1
+                'r16-2': ['Mix C', 'Mix D'], // Winner goes to QF2
+                'r16-3': ['Mix E', 'Mix F'], // Winner goes to QF3
+
+                // QF matches (4 matches) - these will be filled by R16 winners and Byes
+                // We need to define the initial players for the QF slots that receive byes.
+                // Let's say Mix G, Mix H, Mix I, Mix J, Mix K get byes.
+                // QF1: Winner R16-1 vs Mix G (Bye)
+                // QF2: Winner R16-2 vs Mix H (Bye)
+                // QF3: Winner R16-3 vs Mix I (Bye)
+                // QF4: Mix J (Bye) vs Mix K (Bye)
+
+                // For the purpose of initial dropdown population, we'll list all 11 players.
+                // The 'TBD' logic will handle the byes advancing.
+                'initial-players': [
+                    'Mix A', 'Mix B', 'Mix C', 'Mix D', 'Mix E', 'Mix F',
+                    'Mix G (Bye)', 'Mix H (Bye)', 'Mix I (Bye)', 'Mix J (Bye)', 'Mix K (Bye)'
+                ]
+            }
+        };
+
+        // Initialize tournament
+        function initTournament() {
+            // Add event listeners to all score inputs
+            document.querySelectorAll('.score-input').forEach(input => {
+                input.addEventListener('change', updateWinner);
+                input.addEventListener('input', updateLiveScoreboardOnInput);
+            });
+
+            // Populate initial player dropdowns for all brackets
+            populateAllPlayerDropdowns();
+
+            // Add event listeners to player name selects
+            document.querySelectorAll('.player-name-select').forEach(select => {
+                select.addEventListener('change', updateLiveScoreboardOnInput);
+            });
+
+            // Hide all brackets except current tab
+            document.getElementById('singles-bracket').classList.remove('hidden');
+            document.getElementById('doubles-bracket').classList.add('hidden');
+            document.getElementById('mix-doubles-bracket').classList.add('hidden');
+        }
+
+        // Function to populate player dropdowns for all brackets
+        function populateAllPlayerDropdowns() {
+            ['singles', 'doubles', 'mix-doubles'].forEach(bracketType => {
+                const bracketElement = document.getElementById(`${bracketType}-bracket`);
+                if (!bracketElement) return;
+
+                // Handle Mix Doubles specific initial population
+                if (bracketType === 'mix-doubles') {
+                    const mixDoublesPlayers = initialPlayerAssignments['mix-doubles']['initial-players'];
+                    const r16Matches = [
+                        { id: 'mix-doubles-r16-1', p1: mixDoublesPlayers[0], p2: mixDoublesPlayers[1] },
+                        { id: 'mix-doubles-r16-2', p1: mixDoublesPlayers[2], p2: mixDoublesPlayers[3] },
+                        { id: 'mix-doubles-r16-3', p1: mixDoublesPlayers[4], p2: mixDoublesPlayers[5] }
+                    ];
+
+                    r16Matches.forEach(matchData => {
+                        const match = bracketElement.querySelector(`.match[data-match-id="${matchData.id}"]`);
+                        if (match) {
+                            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+                            player1Select.innerHTML = '';
+                            player2Select.innerHTML = '';
+
+                            // Add all players to R16 dropdowns for selection
+                            mixDoublesPlayers.forEach(player => {
+                                const option1 = document.createElement('option');
+                                option1.value = player;
+                                option1.textContent = player;
+                                player1Select.appendChild(option1);
+
+                                const option2 = document.createElement('option');
+                                option2.value = player;
+                                option2.textContent = player;
+                                player2Select.appendChild(option2);
+                            });
+
+                            player1Select.value = matchData.p1;
+                            player2Select.value = matchData.p2;
+                            player1Select.disabled = false;
+                            player2Select.disabled = false;
+                        }
+                    });
+
+                    // For QF, SF, Final in Mix Doubles, they start as TBD and disabled
+                    bracketElement.querySelectorAll('.match').forEach(match => {
+                        const matchId = match.getAttribute('data-match-id');
+                        if (matchId.includes('qf') || matchId.includes('sf') || matchId.includes('final')) {
+                            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                            if (player1Select && player2Select) {
+                                player1Select.innerHTML = '';
+                                player2Select.innerHTML = '';
+                                const tbdOption1 = document.createElement('option');
+                                tbdOption1.value = 'TBD';
+                                tbdOption1.textContent = 'TBD';
+                                player1Select.appendChild(tbdOption1);
+                                const tbdOption2 = document.createElement('option');
+                                tbdOption2.value = 'TBD';
+                                tbdOption2.textContent = 'TBD';
+                                player2Select.appendChild(tbdOption2);
+                                player1Select.disabled = true;
+                                player2Select.disabled = true;
+                            }
+                        }
+                    });
+
+                    // Manually advance byes to QF for Mix Doubles
+                    // QF1: Winner R16-1 vs Mix G (Bye)
+                    // QF2: Winner R16-2 vs Mix H (Bye)
+                    // QF3: Winner R16-3 vs Mix I (Bye)
+                    // QF4: Mix J (Bye) vs Mix K (Bye)
+
+                    const qfMatches = [
+                        { id: 'mix-doubles-qf1', p1_source: 'r16-1', p2_name: 'Mix G (Bye)' },
+                        { id: 'mix-doubles-qf2', p1_source: 'r16-2', p2_name: 'Mix H (Bye)' },
+                        { id: 'mix-doubles-qf3', p1_source: 'r16-3', p2_name: 'Mix I (Bye)' },
+                        { id: 'mix-doubles-qf4', p1_name: 'Mix J (Bye)', p2_name: 'Mix K (Bye)' }
+                    ];
+
+                    qfMatches.forEach(qfData => {
+                        const qfMatch = bracketElement.querySelector(`.match[data-match-id="${qfData.id}"]`);
+                        if (qfMatch) {
+                            const p1Select = qfMatch.querySelector('.player[data-player="1"] .player-name-select');
+                            const p2Select = qfMatch.querySelector('.player[data-player="2"] .player-name-select');
+
+                            if (qfData.p1_name) { // If P1 is a direct bye
+                                p1Select.innerHTML = '';
+                                const option = document.createElement('option');
+                                option.value = qfData.p1_name;
+                                option.textContent = qfData.p1_name;
+                                p1Select.appendChild(option);
+                                p1Select.value = qfData.p1_name;
+                                p1Select.disabled = true;
+                            }
+                            // P1 source from R16 will be handled by updateWinner
+
+                            if (qfData.p2_name) { // If P2 is a direct bye
+                                p2Select.innerHTML = '';
+                                const option = document.createElement('option');
+                                option.value = qfData.p2_name;
+                                option.textContent = qfData.p2_name;
+                                p2Select.appendChild(option);
+                                p2Select.value = qfData.p2_name;
+                                p2Select.disabled = true;
+                            }
+                        }
+                    });
+
+                } else { // Singles and Doubles (standard 8-player bracket)
+                    bracketElement.querySelectorAll('.match').forEach(match => {
+                        const matchId = match.getAttribute('data-match-id');
+                        const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                        const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+                        if (!player1Select || !player2Select) return;
+
+                        if (matchId.includes('qf')) {
+                            player1Select.innerHTML = '';
+                            player2Select.innerHTML = '';
+
+                            const defaultOption1 = document.createElement('option');
+                            defaultOption1.value = '';
+                            defaultOption1.textContent = 'Select Player';
+                            player1Select.appendChild(defaultOption1);
+
+                            const defaultOption2 = document.createElement('option');
+                            defaultOption2.value = '';
+                            defaultOption2.textContent = 'Select Player';
+                            player2Select.appendChild(defaultOption2);
+
+                            const playersToPopulate = (bracketType === 'singles') ? allPlayers : initialPlayerAssignments[bracketType][matchId.split('-')[1]];
+
+                            if (playersToPopulate) {
+                                playersToPopulate.forEach(player => {
+                                    const option1 = document.createElement('option');
+                                    option1.value = player;
+                                    option1.textContent = player;
+                                    player1Select.appendChild(option1);
+
+                                    const option2 = document.createElement('option');
+                                    option2.value = player;
+                                    option2.textContent = player;
+                                    player2Select.appendChild(option2);
+                                });
+                            }
+
+                            const initialPlayers = initialPlayerAssignments[bracketType][matchId.split('-')[1]];
+                            if (initialPlayers) {
+                                player1Select.value = initialPlayers[0];
+                                player2Select.value = initialPlayers[1];
+                            }
+                            player1Select.disabled = false;
+                            player2Select.disabled = false;
+
+                        } else { // SF and Final
+                            player1Select.innerHTML = '';
+                            player2Select.innerHTML = '';
+                            const tbdOption1 = document.createElement('option');
+                            tbdOption1.value = 'TBD';
+                            tbdOption1.textContent = 'TBD';
+                            player1Select.appendChild(tbdOption1);
+                            const tbdOption2 = document.createElement('option');
+                            tbdOption2.value = 'TBD';
+                            tbdOption2.textContent = 'TBD';
+                            player2Select.appendChild(tbdOption2);
+                            player1Select.disabled = true;
+                            player2Select.disabled = true;
+                        }
+                    });
+                }
+            });
+        }
+
+
+        function updateLiveScoreboardOnInput(event) {
+            const match = event.target.closest('.match');
+            if (liveMatchId === match.getAttribute('data-match-id')) {
+                updateLiveScoreboard(match);
+            }
+        }
+
+        function changeTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[onclick="changeTab('${tab}')"]`).classList.add('active');
+
+            document.getElementById('singles-bracket').classList.add('hidden');
+            document.getElementById('doubles-bracket').classList.add('hidden');
+            document.getElementById('mix-doubles-bracket').classList.add('hidden');
+
+            document.getElementById(`${tab}-bracket`).classList.remove('hidden');
+        }
+
+        function toggleLiveScore(matchId) {
+            const match = document.querySelector(`.match[data-match-id="${matchId}"]`);
+            if (match.classList.contains('live-match')) {
+                match.classList.remove('live-match');
+                document.getElementById('live-scoreboard').classList.add('hidden');
+                clearInterval(matchInterval);
+                liveMatchId = null;
+                matchInterval = null;
+            } else {
+                document.querySelectorAll('.live-match').forEach(m => m.classList.remove('live-match'));
+                match.classList.add('live-match');
+                liveMatchId = matchId;
+                updateLiveScoreboard(match);
+                currentSet = 1;
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                document.getElementById('match-status').textContent = 'Ready to play';
+                updateProgressBar();
+                document.getElementById('live-scoreboard').classList.remove('hidden');
+            }
+        }
+
+        function closeLiveScore() {
+            if (liveMatchId) {
+                document.querySelector(`.match[data-match-id="${liveMatchId}"]`).classList.remove('live-match');
+                document.getElementById('live-scoreboard').classList.add('hidden');
+                clearInterval(matchInterval);
+                liveMatchId = null;
+                matchInterval = null;
+            }
+        }
+
+        function updateLiveScoreboard(match) {
+            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+            document.getElementById('live-player-1').textContent = player1Select ? player1Select.value : 'N/A';
+            document.getElementById('live-player-2').textContent = player2Select ? player2Select.value : 'N/A';
+
+            const scores1Container = document.getElementById('live-scores-1');
+            const scores2Container = document.getElementById('live-scores-2');
+
+            scores1Container.innerHTML = '';
+            scores2Container.innerHTML = '';
+
+            const p1Scores = match.querySelectorAll('.player[data-player="1"] .score-input');
+            const p2Scores = match.querySelectorAll('.player[data-player="2"] .score-input');
+
+            p1Scores.forEach((score, i) => {
+                const scoreEl = document.createElement('div');
+                scoreEl.className = 'w-8 text-center font-medium';
+                scoreEl.textContent = score.value;
+                if (i === currentSet - 1) scoreEl.classList.add('text-blue-500');
+                scores1Container.appendChild(scoreEl);
+            });
+
+            p2Scores.forEach((score, i) => {
+                const scoreEl = document.createElement('div');
+                scoreEl.className = 'w-8 text-center font-medium';
+                scoreEl.textContent = score.value;
+                if (i === currentSet - 1) scoreEl.classList.add('text-blue-500');
+                scores2Container.appendChild(scoreEl);
+            });
+
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            if (!liveMatchId) return;
+            const match = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+            if (!match) return;
+
+            const player1 = match.querySelector('.player[data-player="1"]');
+            const player2 = match.querySelector('.player[data-player="2"]');
+
+            const p1ScoreInput = player1.querySelector(`.score-input[data-set="${currentSet}"]`);
+            const p2ScoreInput = player2.querySelector(`.score-input[data-set="${currentSet}"]`);
+
+            if (!p1ScoreInput || !p2ScoreInput) {
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                return;
+            }
+
+            const p1Score = parseInt(p1ScoreInput.value);
+            const p2Score = parseInt(p2ScoreInput.value);
+
+            const totalPoints = p1Score + p2Score;
+
+            if (totalPoints > 0) {
+                const p1Percentage = (p1Score / totalPoints) * 100;
+                document.getElementById('progress-bar').style.width = `${p1Percentage}%`;
+            } else {
+                document.getElementById('progress-bar').style.width = '0%';
+            }
+
+            document.getElementById('current-set').textContent = `Set ${currentSet}`;
+        }
+
+        function updateWinner(event) {
+            const match = event.target.closest('.match');
+            if (!match) return;
+
+            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+            const player1Div = match.querySelector('.player[data-player="1"]');
+            const player2Div = match.querySelector('.player[data-player="2"]');
+
+            const p1Scores = Array.from(match.querySelectorAll('.player[data-player="1"] .score-input')).map(input => parseInt(input.value));
+            const p2Scores = Array.from(match.querySelectorAll('.player[data-player="2"] .score-input')).map(input => parseInt(input.value));
+
+            let p1SetWins = 0;
+            let p2SetWins = 0;
+
+            for (let i = 0; i < Math.min(p1Scores.length, p2Scores.length); i++) {
+                const p1s = p1Scores[i];
+                const p2s = p2Scores[i];
+
+                if (p1s >= 21 && (p1s - p2s >= 2 || p1s === 30)) {
+                    p1SetWins++;
+                } else if (p2s >= 21 && (p2s - p1s >= 2 || p2s === 30)) {
+                    p2SetWins++;
+                }
+            }
+
+            player1Div.classList.remove('winner');
+            player2Div.classList.remove('winner');
+
+            let winnerPlayerName = null;
+            if (p1SetWins > p2SetWins) {
+                player1Div.classList.add('winner');
+                winnerPlayerName = player1Select.value;
+            } else if (p2SetWins > p1SetWins) {
+                player2Div.classList.add('winner');
+                winnerPlayerName = player2Select.value;
+            }
+
+            // Update next round's TBD player
+            const matchId = match.getAttribute('data-match-id');
+            const bracketType = matchId.split('-')[0]; // e.g., 'singles', 'doubles', 'mix'
+            const matchRound = matchId.split('-')[1]; // e.g., 'qf', 'r16', 'sf'
+            const matchNumber = matchId.split('-')[2]; // e.g., '1', '2', '3'
+
+            if (winnerPlayerName && (p1SetWins >= 2 || p2SetWins >= 2)) { // Only update if match is completed
+                let nextMatchIdSuffix = '';
+                let nextPlayerSlot = 0;
+
+                if (bracketType === 'mix') { // Special handling for Mix Doubles (11 players)
+                    if (matchRound === 'r16') {
+                        if (matchNumber === '1') { nextMatchIdSuffix = 'qf1'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '2') { nextMatchIdSuffix = 'qf2'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '3') { nextMatchIdSuffix = 'qf3'; nextPlayerSlot = 1; }
+                    } else if (matchRound === 'qf') {
+                        if (matchNumber === '1') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '2') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 2; }
+                        else if (matchNumber === '3') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '4') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 2; }
+                    } else if (matchRound === 'sf') {
+                        if (matchNumber === '1') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '2') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 2; }
+                    }
+                } else { // Standard 8-player bracket (singles, doubles)
+                    if (matchRound === 'qf') {
+                        if (matchNumber === '1') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '2') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 2; }
+                        else if (matchNumber === '3') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '4') { nextMatchIdSuffix = 'sf2'; nextPlayerSlot = 2; }
+                    } else if (matchRound === 'sf') {
+                        if (matchNumber === '1') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 1; }
+                        else if (matchNumber === '2') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 2; }
+                    }
+                }
+
+
+                if (nextMatchIdSuffix) {
+                    const nextMatchFullId = `${bracketType}-${nextMatchIdSuffix}`;
+                    const nextMatch = document.querySelector(`.match[data-match-id="${nextMatchFullId}"]`);
+                    if (nextMatch) {
+                        const nextPlayerSelect = nextMatch.querySelector(`.player[data-player="${nextPlayerSlot}"] .player-name-select`);
+                        if (nextPlayerSelect) {
+                            nextPlayerSelect.disabled = false;
+                            nextPlayerSelect.innerHTML = '';
+                            const winnerOption = document.createElement('option');
+                            winnerOption.value = winnerPlayerName;
+                            winnerOption.textContent = winnerPlayerName;
+                            nextPlayerSelect.appendChild(winnerOption);
+                            nextPlayerSelect.value = winnerPlayerName;
+                            nextPlayerSelect.disabled = true;
+                        }
+                    }
+                }
+            }
+
+
+            if (liveMatchId === match.getAttribute('data-match-id')) {
+                let activeSetFound = false;
+                for (let i = 0; i < p1Scores.length; i++) {
+                    if (p1Scores[i] !== 0 || p2Scores[i] !== 0) {
+                        currentSet = i + 1;
+                        activeSetFound = true;
+                        break;
+                    }
+                }
+                if (!activeSetFound) {
+                    currentSet = 1;
+                }
+
+                updateLiveScoreboard(match);
+                if (p1SetWins >= 2 || p2SetWins >= 2) {
+                    document.getElementById('match-status').textContent = 'Match Completed';
+                } else {
+                    document.getElementById('match-status').textContent = 'Playing';
+                }
+            }
+        }
+
+        // Removed startNewTournament and resetScores functions
+
+        window.onload = initTournament;
+    </script>
+</body>
+</html>
