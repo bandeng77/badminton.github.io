@@ -872,25 +872,7 @@
         </div>
     </div>
 
-    <script type="module">
-        // Import the functions you need from the SDKs you need
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDoc, updateDoc, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
-
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCgXWrv-yNSGV1cCzMghgNksY1XNHAfl38",
-            authDomain: "badmintonefk.firebaseapp.com",
-            projectId: "badmintonefk",
-            storageBucket: "badmintonefk.firebasestorage.app",
-            messagingSenderId: "987525154148",
-            appId: "1:987525154148:web:faba3301c884e9cf6a2671"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app); // Initialize Firestore
-
+    <script>
         // Global variables
         let currentTab = 'singles';
         let liveMatchId = null;
@@ -898,7 +880,6 @@
         let currentSet = 1;
         let player1Score = 0;
         let player2Score = 0;
-        const currentTournamentId = 'myTournament'; // Define a fixed tournament ID for now
 
         // Daftar pemain yang tersedia
         const allPlayers = [
@@ -921,9 +902,41 @@
                 'qf4': ['Team G', 'Team H']
             },
             'mix-doubles': {
-                'r16-1': ['Mix A', 'Mix B'],
-                'r16-2': ['Mix C', 'Mix D'],
-                'r16-3': ['Mix E', 'Mix F'],
+                // 11 players: 5 byes, 3 matches in Round of 16
+                // Players: M1, M2, M3, M4, M5, M6, M7, M8, M9, M10, M11
+                // Byes: B1, B2, B3, B4, B5
+                // R16 matches:
+                // (M1 vs M2) -> QF1
+                // (M3 vs M4) -> QF2
+                // (M5 vs M6) -> QF3
+                // (M7 vs M8) -> QF4
+                // (M9 vs M10) -> QF5
+                // (M11 vs Bye) -> QF6
+                // (Bye vs Bye) -> QF7
+                // (Bye vs Bye) -> QF8
+
+                // Let's assign 11 players to the R16 matches and 5 byes
+                // The 5 byes will automatically advance to QF.
+                // We need 3 matches in R16, and 5 byes.
+                // Total 16 slots in a full bracket. 11 players means 5 byes.
+                // The 5 byes will be placed strategically.
+                // For simplicity, let's assign 6 players to 3 matches, and 5 players get byes.
+
+                // R16 matches (3 matches)
+                'r16-1': ['Mix A', 'Mix B'], // Winner goes to QF1
+                'r16-2': ['Mix C', 'Mix D'], // Winner goes to QF2
+                'r16-3': ['Mix E', 'Mix F'], // Winner goes to QF3
+
+                // QF matches (4 matches) - these will be filled by R16 winners and Byes
+                // We need to define the initial players for the QF slots that receive byes.
+                // Let's say Mix G, Mix H, Mix I, Mix J, Mix K get byes.
+                // QF1: Winner R16-1 vs Mix G (Bye)
+                // QF2: Winner R16-2 vs Mix H (Bye)
+                // QF3: Winner R16-3 vs Mix I (Bye)
+                // QF4: Mix J (Bye) vs Mix K (Bye)
+
+                // For the purpose of initial dropdown population, we'll list all 11 players.
+                // The 'TBD' logic will handle the byes advancing.
                 'initial-players': [
                     'Mix A', 'Mix B', 'Mix C', 'Mix D', 'Mix E', 'Mix F',
                     'Mix G (Bye)', 'Mix H (Bye)', 'Mix I (Bye)', 'Mix J (Bye)', 'Mix K (Bye)'
@@ -932,131 +945,198 @@
         };
 
         // Initialize tournament
-        async function initTournament() {
+        function initTournament() {
             // Add event listeners to all score inputs
             document.querySelectorAll('.score-input').forEach(input => {
                 input.addEventListener('change', updateWinner);
                 input.addEventListener('input', updateLiveScoreboardOnInput);
             });
 
+            // Populate initial player dropdowns for all brackets
+            populateAllPlayerDropdowns();
+
             // Add event listeners to player name selects
             document.querySelectorAll('.player-name-select').forEach(select => {
                 select.addEventListener('change', updateLiveScoreboardOnInput);
             });
 
-            // *** PERBAIKAN ***
-            // Populate all dropdowns with all possible players first.
-            // This ensures options are available before loading specific values.
-            populateAllDropdownOptions();
-
-            // Set initial tab visibility (singles active by default)
+            // Hide all brackets except current tab
             document.getElementById('singles-bracket').classList.remove('hidden');
             document.getElementById('doubles-bracket').classList.add('hidden');
             document.getElementById('mix-doubles-bracket').classList.add('hidden');
-            document.querySelector(`.tab[onclick="changeTab('singles')"]`).classList.add('active');
-
-
-            // Load data from Firestore for the current tournament
-            // This should happen AFTER dropdowns are populated with options
-            await loadTournamentData(currentTournamentId);
         }
 
-        // *** PERBAIKAN: Fungsi baru untuk mengisi semua opsi dropdown ***
-        // This function ensures all possible player names are available in all dropdowns
-        // It does NOT set the selected value or disable the dropdowns.
-        function populateAllDropdownOptions() {
+        // Function to populate player dropdowns for all brackets
+        function populateAllPlayerDropdowns() {
             ['singles', 'doubles', 'mix-doubles'].forEach(bracketType => {
                 const bracketElement = document.getElementById(`${bracketType}-bracket`);
                 if (!bracketElement) return;
 
-                bracketElement.querySelectorAll('.player-name-select').forEach(select => {
-                    select.innerHTML = ''; // Clear existing options
+                // Handle Mix Doubles specific initial population
+                if (bracketType === 'mix-doubles') {
+                    const mixDoublesPlayers = initialPlayerAssignments['mix-doubles']['initial-players'];
+                    const r16Matches = [
+                        { id: 'mix-doubles-r16-1', p1: mixDoublesPlayers[0], p2: mixDoublesPlayers[1] },
+                        { id: 'mix-doubles-r16-2', p1: mixDoublesPlayers[2], p2: mixDoublesPlayers[3] },
+                        { id: 'mix-doubles-r16-3', p1: mixDoublesPlayers[4], p2: mixDoublesPlayers[5] }
+                    ];
 
-                    const defaultOption = document.createElement('option');
-                    defaultOption.value = '';
-                    defaultOption.textContent = 'Select Player';
-                    select.appendChild(defaultOption);
+                    r16Matches.forEach(matchData => {
+                        const match = bracketElement.querySelector(`.match[data-match-id="${matchData.id}"]`);
+                        if (match) {
+                            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
 
-                    // Add all possible players/teams to the dropdown
-                    if (bracketType === 'singles') {
-                        allPlayers.forEach(player => {
-                            const option = document.createElement('option');
-                            option.value = player;
-                            option.textContent = player;
-                            select.appendChild(option);
-                        });
-                    } else if (bracketType === 'doubles') {
-                        // For doubles, we'll just list generic teams for selection
-                        ['Team A', 'Team B', 'Team C', 'Team D', 'Team E', 'Team F', 'Team G', 'Team H'].forEach(team => {
-                            const option = document.createElement('option');
-                            option.value = team;
-                            option.textContent = team;
-                            select.appendChild(option);
-                        });
-                    } else if (bracketType === 'mix-doubles') {
-                        initialPlayerAssignments['mix-doubles']['initial-players'].forEach(player => {
-                            const option = document.createElement('option');
-                            option.value = player;
-                            option.textContent = player;
-                            select.appendChild(option);
-                        });
-                    }
-                });
-            });
-        }
+                            player1Select.innerHTML = '';
+                            player2Select.innerHTML = '';
 
-        // *** PERBAIKAN: Fungsi lama populateAllPlayerDropdowns diubah namanya dan logikanya ***
-        // This function now sets initial values for QF matches and TBD for later rounds
-        // It should be called AFTER populateAllDropdownOptions and BEFORE loadTournamentData
-        function setInitialBracketState() {
-            ['singles', 'doubles', 'mix-doubles'].forEach(bracketType => {
-                const bracketElement = document.getElementById(`${bracketType}-bracket`);
-                if (!bracketElement) return;
+                            // Add all players to R16 dropdowns for selection
+                            mixDoublesPlayers.forEach(player => {
+                                const option1 = document.createElement('option');
+                                option1.value = player;
+                                option1.textContent = player;
+                                player1Select.appendChild(option1);
 
-                bracketElement.querySelectorAll('.match').forEach(match => {
-                    const matchId = match.getAttribute('data-match-id');
-                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
-                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                                const option2 = document.createElement('option');
+                                option2.value = player;
+                                option2.textContent = player;
+                                player2Select.appendChild(option2);
+                            });
 
-                    if (!player1Select || !player2Select) return;
-
-                    // Reset disabled state
-                    player1Select.disabled = false;
-                    player2Select.disabled = false;
-
-                    // Set initial players for Quarter Finals (or R16 for mix-doubles)
-                    if (matchId.includes('qf') || matchId.includes('r16')) {
-                        let initialPlayers;
-                        if (bracketType === 'singles') {
-                            initialPlayers = initialPlayerAssignments['singles'][matchId.split('-')[1]];
-                        } else if (bracketType === 'doubles') {
-                            initialPlayers = initialPlayerAssignments['doubles'][matchId.split('-')[1]];
-                        } else if (bracketType === 'mix-doubles' && matchId.includes('r16')) {
-                            initialPlayers = initialPlayerAssignments['mix-doubles'][matchId.split('-')[1]];
+                            player1Select.value = matchData.p1;
+                            player2Select.value = matchData.p2;
+                            player1Select.disabled = false;
+                            player2Select.disabled = false;
                         }
+                    });
 
-                        if (initialPlayers) {
-                            player1Select.value = initialPlayers[0];
-                            player2Select.value = initialPlayers[1];
-                        } else {
-                            // For QF in mix-doubles that are byes, set specific players
-                            if (bracketType === 'mix-doubles') {
-                                if (matchId === 'mix-doubles-qf1') player2Select.value = 'Mix G (Bye)';
-                                if (matchId === 'mix-doubles-qf2') player2Select.value = 'Mix H (Bye)';
-                                if (matchId === 'mix-doubles-qf3') player2Select.value = 'Mix I (Bye)';
-                                if (matchId === 'mix-doubles-qf4') {
-                                    player1Select.value = 'Mix J (Bye)';
-                                    player2Select.value = 'Mix K (Bye)';
-                                }
+                    // For QF, SF, Final in Mix Doubles, they start as TBD and disabled
+                    bracketElement.querySelectorAll('.match').forEach(match => {
+                        const matchId = match.getAttribute('data-match-id');
+                        if (matchId.includes('qf') || matchId.includes('sf') || matchId.includes('final')) {
+                            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                            if (player1Select && player2Select) {
+                                player1Select.innerHTML = '';
+                                player2Select.innerHTML = '';
+                                const tbdOption1 = document.createElement('option');
+                                tbdOption1.value = 'TBD';
+                                tbdOption1.textContent = 'TBD';
+                                player1Select.appendChild(tbdOption1);
+                                const tbdOption2 = document.createElement('option');
+                                tbdOption2.value = 'TBD';
+                                tbdOption2.textContent = 'TBD';
+                                player2Select.appendChild(tbdOption2);
+                                player1Select.disabled = true;
+                                player2Select.disabled = true;
                             }
                         }
-                    } else { // SF and Final start as TBD
-                        player1Select.value = 'TBD';
-                        player2Select.value = 'TBD';
-                        player1Select.disabled = true; // Disable TBD fields
-                        player2Select.disabled = true;
-                    }
-                });
+                    });
+
+                    // Manually advance byes to QF for Mix Doubles
+                    // QF1: Winner R16-1 vs Mix G (Bye)
+                    // QF2: Winner R16-2 vs Mix H (Bye)
+                    // QF3: Winner R16-3 vs Mix I (Bye)
+                    // QF4: Mix J (Bye) vs Mix K (Bye)
+
+                    const qfMatches = [
+                        { id: 'mix-doubles-qf1', p1_source: 'r16-1', p2_name: 'Mix G (Bye)' },
+                        { id: 'mix-doubles-qf2', p1_source: 'r16-2', p2_name: 'Mix H (Bye)' },
+                        { id: 'mix-doubles-qf3', p1_source: 'r16-3', p2_name: 'Mix I (Bye)' },
+                        { id: 'mix-doubles-qf4', p1_name: 'Mix J (Bye)', p2_name: 'Mix K (Bye)' }
+                    ];
+
+                    qfMatches.forEach(qfData => {
+                        const qfMatch = bracketElement.querySelector(`.match[data-match-id="${qfData.id}"]`);
+                        if (qfMatch) {
+                            const p1Select = qfMatch.querySelector('.player[data-player="1"] .player-name-select');
+                            const p2Select = qfMatch.querySelector('.player[data-player="2"] .player-name-select');
+
+                            if (qfData.p1_name) { // If P1 is a direct bye
+                                p1Select.innerHTML = '';
+                                const option = document.createElement('option');
+                                option.value = qfData.p1_name;
+                                option.textContent = qfData.p1_name;
+                                p1Select.appendChild(option);
+                                p1Select.value = qfData.p1_name;
+                                p1Select.disabled = true;
+                            }
+                            // P1 source from R16 will be handled by updateWinner
+
+                            if (qfData.p2_name) { // If P2 is a direct bye
+                                p2Select.innerHTML = '';
+                                const option = document.createElement('option');
+                                option.value = qfData.p2_name;
+                                option.textContent = qfData.p2_name;
+                                p2Select.appendChild(option);
+                                p2Select.value = qfData.p2_name;
+                                p2Select.disabled = true;
+                            }
+                        }
+                    });
+
+                } else { // Singles and Doubles (standard 8-player bracket)
+                    bracketElement.querySelectorAll('.match').forEach(match => {
+                        const matchId = match.getAttribute('data-match-id');
+                        const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                        const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+                        if (!player1Select || !player2Select) return;
+
+                        if (matchId.includes('qf')) {
+                            player1Select.innerHTML = '';
+                            player2Select.innerHTML = '';
+
+                            const defaultOption1 = document.createElement('option');
+                            defaultOption1.value = '';
+                            defaultOption1.textContent = 'Select Player';
+                            player1Select.appendChild(defaultOption1);
+
+                            const defaultOption2 = document.createElement('option');
+                            defaultOption2.value = '';
+                            defaultOption2.textContent = 'Select Player';
+                            player2Select.appendChild(defaultOption2);
+
+                            const playersToPopulate = (bracketType === 'singles') ? allPlayers : initialPlayerAssignments[bracketType][matchId.split('-')[1]];
+
+                            if (playersToPopulate) {
+                                playersToPopulate.forEach(player => {
+                                    const option1 = document.createElement('option');
+                                    option1.value = player;
+                                    option1.textContent = player;
+                                    player1Select.appendChild(option1);
+
+                                    const option2 = document.createElement('option');
+                                    option2.value = player;
+                                    option2.textContent = player;
+                                    player2Select.appendChild(option2);
+                                });
+                            }
+
+                            const initialPlayers = initialPlayerAssignments[bracketType][matchId.split('-')[1]];
+                            if (initialPlayers) {
+                                player1Select.value = initialPlayers[0];
+                                player2Select.value = initialPlayers[1];
+                            }
+                            player1Select.disabled = false;
+                            player2Select.disabled = false;
+
+                        } else { // SF and Final
+                            player1Select.innerHTML = '';
+                            player2Select.innerHTML = '';
+                            const tbdOption1 = document.createElement('option');
+                            tbdOption1.value = 'TBD';
+                            tbdOption1.textContent = 'TBD';
+                            player1Select.appendChild(tbdOption1);
+                            const tbdOption2 = document.createElement('option');
+                            tbdOption2.value = 'TBD';
+                            tbdOption2.textContent = 'TBD';
+                            player2Select.appendChild(tbdOption2);
+                            player1Select.disabled = true;
+                            player2Select.disabled = true;
+                        }
+                    });
+                }
             });
         }
 
@@ -1069,9 +1149,7 @@
         }
 
         function changeTab(tab) {
-            console.log(`Changing tab to: ${tab}`); // Debugging
             currentTab = tab;
-
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`.tab[onclick="changeTab('${tab}')"]`).classList.add('active');
 
@@ -1080,7 +1158,6 @@
             document.getElementById('mix-doubles-bracket').classList.add('hidden');
 
             document.getElementById(`${tab}-bracket`).classList.remove('hidden');
-            closeLiveScore(); // Close live scoreboard when changing tabs
         }
 
         function toggleLiveScore(matchId) {
@@ -1181,32 +1258,17 @@
             document.getElementById('current-set').textContent = `Set ${currentSet}`;
         }
 
-        async function updateWinner(event) {
-            const matchElement = event.target.closest('.match');
-            if (!matchElement) return;
+        function updateWinner(event) {
+            const match = event.target.closest('.match');
+            if (!match) return;
 
-            const matchId = matchElement.getAttribute('data-match-id');
-            const bracketType = matchId.split('-')[0]; // e.g., 'singles', 'doubles', 'mix'
+            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+            const player1Div = match.querySelector('.player[data-player="1"]');
+            const player2Div = match.querySelector('.player[data-player="2"]');
 
-            const player1Select = matchElement.querySelector('.player[data-player="1"] .player-name-select');
-            const player2Select = matchElement.querySelector('.player[data-player="2"] .player-name-select');
-            const player1Div = matchElement.querySelector('.player[data-player="1"]');
-            const player2Div = matchElement.querySelector('.player[data-player="2"]');
-
-            const p1ScoreInputs = Array.from(matchElement.querySelectorAll('.player[data-player="1"] .score-input'));
-            const p2ScoreInputs = Array.from(matchElement.querySelectorAll('.player[data-player="2"] .score-input'));
-
-            let p1Scores = [];
-            let p2Scores = [];
-            let currentMatchScores = []; // To store scores for Firestore
-
-            for (let i = 0; i < 3; i++) { // Assuming max 3 sets
-                const p1s = parseInt(p1ScoreInputs[i].value);
-                const p2s = parseInt(p2ScoreInputs[i].value);
-                p1Scores.push(p1s);
-                p2Scores.push(p2s);
-                currentMatchScores.push([p1s, p2s, 0]); // Store as [p1_score, p2_score, set_status (0=ongoing, 1=p1_win, 2=p2_win)]
-            }
+            const p1Scores = Array.from(match.querySelectorAll('.player[data-player="1"] .score-input')).map(input => parseInt(input.value));
+            const p2Scores = Array.from(match.querySelectorAll('.player[data-player="2"] .score-input')).map(input => parseInt(input.value));
 
             let p1SetWins = 0;
             let p2SetWins = 0;
@@ -1217,10 +1279,8 @@
 
                 if (p1s >= 21 && (p1s - p2s >= 2 || p1s === 30)) {
                     p1SetWins++;
-                    currentMatchScores[i][2] = 1; // Player 1 wins this set
                 } else if (p2s >= 21 && (p2s - p1s >= 2 || p2s === 30)) {
                     p2SetWins++;
-                    currentMatchScores[i][2] = 2; // Player 2 wins this set
                 }
             }
 
@@ -1228,8 +1288,6 @@
             player2Div.classList.remove('winner');
 
             let winnerPlayerName = null;
-            let matchStatus = "playing";
-
             if (p1SetWins > p2SetWins) {
                 player1Div.classList.add('winner');
                 winnerPlayerName = player1Select.value;
@@ -1238,131 +1296,17 @@
                 winnerPlayerName = player2Select.value;
             }
 
-            if (p1SetWins >= 2 || p2SetWins >= 2) {
-                matchStatus = "completed";
-            }
-
-            // Save data to Firestore
-            const matchRef = doc(db, 'tournaments', currentTournamentId, 'matches', matchId);
-
-            try {
-                await setDoc(matchRef, {
-                    player1: player1Select.value,
-                    player2: player2Select.value,
-                    scores: currentMatchScores,
-                    winner: winnerPlayerName,
-                    round: matchId.split('-')[1], // e.g., 'qf', 'r16', 'sf'
-                    status: matchStatus,
-                    lastUpdated: new Date()
-                }, { merge: true });
-                console.log("Match data saved to Firestore successfully!");
-            } catch (e) {
-                console.error("Error saving match data: ", e);
-            }
-
             // Update next round's TBD player
-            updateBracketUIFromData(matchId, winnerPlayerName, matchStatus);
+            const matchId = match.getAttribute('data-match-id');
+            const bracketType = matchId.split('-')[0]; // e.g., 'singles', 'doubles', 'mix'
+            const matchRound = matchId.split('-')[1]; // e.g., 'qf', 'r16', 'sf'
+            const matchNumber = matchId.split('-')[2]; // e.g., '1', '2', '3'
 
-            if (liveMatchId === matchId) {
-                let activeSetFound = false;
-                for (let i = 0; i < p1Scores.length; i++) {
-                    if (p1Scores[i] !== 0 || p2Scores[i] !== 0) {
-                        currentSet = i + 1;
-                        activeSetFound = true;
-                        break;
-                    }
-                }
-                if (!activeSetFound) {
-                    currentSet = 1;
-                }
-
-                updateLiveScoreboard(matchElement);
-                if (matchStatus === "completed") {
-                    document.getElementById('match-status').textContent = 'Match Completed';
-                } else {
-                    document.getElementById('match-status').textContent = 'Playing';
-                }
-            }
-        }
-
-        // Function to load data from Firestore
-        async function loadTournamentData(tournamentId) {
-            console.log("Loading tournament data from Firestore..."); // Debugging
-            try {
-                const matchesRef = collection(db, 'tournaments', tournamentId, 'matches');
-                const q = query(matchesRef);
-                const querySnapshot = await getDocs(q);
-
-                // *** PERBAIKAN: Panggil setInitialBracketState di sini untuk memastikan TBD dan byes diatur sebelum data dimuat ***
-                setInitialBracketState();
-
-                querySnapshot.forEach((doc) => {
-                    const matchData = doc.data();
-                    const matchId = doc.id;
-                    console.log(`Loading match: ${matchId}`, matchData); // Debugging
-
-                    const matchElement = document.querySelector(`.match[data-match-id="${matchId}"]`);
-                    if (matchElement) {
-                        const player1Select = matchElement.querySelector('.player[data-player="1"] .player-name-select');
-                        const player2Select = matchElement.querySelector('.player[data-player="2"] .player-name-select');
-                        const p1ScoreInputs = Array.from(matchElement.querySelectorAll('.player[data-player="1"] .score-input'));
-                        const p2ScoreInputs = Array.from(matchElement.querySelectorAll('.player[data-player="2"] .score-input'));
-                        const player1Div = matchElement.querySelector('.player[data-player="1"]');
-                        const player2Div = matchElement.querySelector('.player[data-player="2"]');
-
-                        // Set player names
-                        if (player1Select) {
-                            // *** PERBAIKAN: Jangan hapus opsi, cukup set nilai dan nonaktifkan ***
-                            player1Select.value = matchData.player1;
-                            player1Select.disabled = true;
-                        }
-                        if (player2Select) {
-                            // *** PERBAIKAN: Jangan hapus opsi, cukup set nilai dan nonaktifkan ***
-                            player2Select.value = matchData.player2;
-                            player2Select.disabled = true;
-                        }
-
-                        // Set scores
-                        if (matchData.scores) {
-                            matchData.scores.forEach((setScores, index) => {
-                                if (p1ScoreInputs[index]) p1ScoreInputs[index].value = setScores[0];
-                                if (p2ScoreInputs[index]) p2ScoreInputs[index].value = setScores[1];
-                            });
-                        }
-
-                        // Set winner class
-                        player1Div.classList.remove('winner');
-                        player2Div.classList.remove('winner');
-                        if (matchData.winner === matchData.player1) {
-                            player1Div.classList.add('winner');
-                        } else if (matchData.winner === matchData.player2) {
-                            player2Div.classList.add('winner');
-                        }
-
-                        // Propagate winners to next rounds
-                        updateBracketUIFromData(matchId, matchData.winner, matchData.status);
-                    }
-                });
-                console.log("Tournament data loaded from Firestore successfully!");
-            } catch (e) {
-                console.error("Error loading tournament data: ", e);
-            }
-        }
-
-        // Helper function to update UI based on loaded data (similar to part of updateWinner)
-        function updateBracketUIFromData(matchId, winnerPlayerName, matchStatus) {
-            const matchElement = document.querySelector(`.match[data-match-id="${matchId}"]`);
-            if (!matchElement) return;
-
-            const bracketType = matchId.split('-')[0];
-            const matchRound = matchId.split('-')[1];
-            const matchNumber = matchId.split('-')[2];
-
-            if (winnerPlayerName && matchStatus === "completed") {
+            if (winnerPlayerName && (p1SetWins >= 2 || p2SetWins >= 2)) { // Only update if match is completed
                 let nextMatchIdSuffix = '';
                 let nextPlayerSlot = 0;
 
-                if (bracketType === 'mix-doubles') {
+                if (bracketType === 'mix') { // Special handling for Mix Doubles (11 players)
                     if (matchRound === 'r16') {
                         if (matchNumber === '1') { nextMatchIdSuffix = 'qf1'; nextPlayerSlot = 1; }
                         else if (matchNumber === '2') { nextMatchIdSuffix = 'qf2'; nextPlayerSlot = 1; }
@@ -1376,7 +1320,7 @@
                         if (matchNumber === '1') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 1; }
                         else if (matchNumber === '2') { nextMatchIdSuffix = 'final'; nextPlayerSlot = 2; }
                     }
-                } else {
+                } else { // Standard 8-player bracket (singles, doubles)
                     if (matchRound === 'qf') {
                         if (matchNumber === '1') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 1; }
                         else if (matchNumber === '2') { nextMatchIdSuffix = 'sf1'; nextPlayerSlot = 2; }
@@ -1388,20 +1332,50 @@
                     }
                 }
 
+
                 if (nextMatchIdSuffix) {
                     const nextMatchFullId = `${bracketType}-${nextMatchIdSuffix}`;
-                    const nextMatchElement = document.querySelector(`.match[data-match-id="${nextMatchFullId}"]`);
-                    if (nextMatchElement) {
-                        const nextPlayerSelect = nextMatchElement.querySelector(`.player[data-player="${nextPlayerSlot}"] .player-name-select`);
+                    const nextMatch = document.querySelector(`.match[data-match-id="${nextMatchFullId}"]`);
+                    if (nextMatch) {
+                        const nextPlayerSelect = nextMatch.querySelector(`.player[data-player="${nextPlayerSlot}"] .player-name-select`);
                         if (nextPlayerSelect) {
-                            nextPlayerSelect.disabled = false; // Enable to set value
+                            nextPlayerSelect.disabled = false;
+                            nextPlayerSelect.innerHTML = '';
+                            const winnerOption = document.createElement('option');
+                            winnerOption.value = winnerPlayerName;
+                            winnerOption.textContent = winnerPlayerName;
+                            nextPlayerSelect.appendChild(winnerOption);
                             nextPlayerSelect.value = winnerPlayerName;
-                            nextPlayerSelect.disabled = true; // Then disable again
+                            nextPlayerSelect.disabled = true;
                         }
                     }
                 }
             }
+
+
+            if (liveMatchId === match.getAttribute('data-match-id')) {
+                let activeSetFound = false;
+                for (let i = 0; i < p1Scores.length; i++) {
+                    if (p1Scores[i] !== 0 || p2Scores[i] !== 0) {
+                        currentSet = i + 1;
+                        activeSetFound = true;
+                        break;
+                    }
+                }
+                if (!activeSetFound) {
+                    currentSet = 1;
+                }
+
+                updateLiveScoreboard(match);
+                if (p1SetWins >= 2 || p2SetWins >= 2) {
+                    document.getElementById('match-status').textContent = 'Match Completed';
+                } else {
+                    document.getElementById('match-status').textContent = 'Playing';
+                }
+            }
         }
+
+        // Removed startNewTournament and resetScores functions
 
         window.onload = initTournament;
     </script>
