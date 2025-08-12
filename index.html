@@ -476,7 +476,6 @@
             /* Ini adalah perkiraan, mungkin perlu disesuaikan secara manual jika layout sangat dinamis */
             top: calc(1rem + 1px + 50% + 1px + 2 * (1.2rem + 1rem + 1rem)); /* match padding + match margin-top + match margin-bottom */
             /* Perhitungan yang lebih akurat: tinggi match + 2*margin match + 2*padding match */
-            /* Asumsi tinggi match sekitar 150px (termasuk padding dan margin) */
             /* top: calc(1rem + 1px + 50% + 1px + 2 * (150px)); */
         }
 
@@ -3021,6 +3020,7 @@
 
                     const matchDataset = JSON.parse(match.dataset.matchData || '{}');
                     const setWinners = matchDataset.setWinners || [];
+                    const matchWinner = matchDataset.matchWinner || null; // Tambahkan matchWinner
 
                     matchesData[matchId] = {
                         player1: player1Select.value,
@@ -3030,6 +3030,7 @@
                         isWinner1: isWinner1,
                         isWinner2: isWinner2,
                         setWinners: setWinners,
+                        matchWinner: matchWinner // Simpan matchWinner
                     };
                 });
                 allBracketData[bracketId] = matchesData;
@@ -3091,26 +3092,35 @@
                     const player2Div = match.querySelector('.player[data-player="2"]');
 
                     // Update dropdown values (hanya jika berbeda untuk menghindari reset fokus admin)
-                    if (player1Select && player1Select.value !== data.player1) {
-                        // Tambahkan opsi jika belum ada
-                        if (data.player1 && !Array.from(player1Select.options).some(opt => opt.value === data.player1)) {
-                            const newOption = document.createElement('option');
-                            newOption.value = data.player1;
-                            newOption.textContent = data.player1;
-                            player1Select.appendChild(newOption);
+                    if (player1Select) { // Tambahkan cek null
+                        if (data.player1 && player1Select.value !== data.player1) {
+                            // Tambahkan opsi jika belum ada
+                            if (!Array.from(player1Select.options).some(opt => opt.value === data.player1)) {
+                                const newOption = document.createElement('option');
+                                newOption.value = data.player1;
+                                newOption.textContent = data.player1;
+                                player1Select.appendChild(newOption);
+                            }
+                            player1Select.value = data.player1;
+                        } else if (!data.player1) { // Jika data.player1 null/kosong, reset select
+                            player1Select.value = '';
                         }
-                        player1Select.value = data.player1;
                     }
-                    if (player2Select && player2Select.value !== data.player2) {
-                        // Tambahkan opsi jika belum ada
-                        if (data.player2 && !Array.from(player2Select.options).some(opt => opt.value === data.player2)) {
-                            const newOption = document.createElement('option');
-                            newOption.value = data.player2;
-                            newOption.textContent = data.player2;
-                            player2Select.appendChild(newOption);
+                    if (player2Select) { // Tambahkan cek null
+                        if (data.player2 && player2Select.value !== data.player2) {
+                            // Tambahkan opsi jika belum ada
+                            if (!Array.from(player2Select.options).some(opt => opt.value === data.player2)) {
+                                const newOption = document.createElement('option');
+                                newOption.value = data.player2;
+                                newOption.textContent = data.player2;
+                                player2Select.appendChild(newOption);
+                            }
+                            player2Select.value = data.player2;
+                        } else if (!data.player2) { // Jika data.player2 null/kosong, reset select
+                            player2Select.value = '';
                         }
-                        player2Select.value = data.player2;
                     }
+
 
                     // Update scores
                     p1ScoreInputs.forEach((input, i) => {
@@ -3134,8 +3144,11 @@
                         else player2Div.classList.remove('winner');
                     }
 
-                    // Update dataset for setWinners
-                    match.dataset.matchData = JSON.stringify({ setWinners: data.setWinners || [] });
+                    // Update dataset for setWinners and matchWinner
+                    match.dataset.matchData = JSON.stringify({
+                        setWinners: data.setWinners || [],
+                        matchWinner: data.matchWinner || null // Load matchWinner
+                    });
 
                     // Jika pertandingan ini adalah pertandingan live saat ini, perbarui scoreboard live
                     if (matchId === liveMatchId) {
@@ -3202,6 +3215,9 @@
                     if (doc.exists) {
                         const allBracketData = doc.data();
                         updateUIFromFirestoreSnapshot(allBracketData);
+                        // Setelah UI diperbarui, jalankan logika untuk meneruskan pemenang
+                        // Ini penting agar perubahan dari Firestore juga memicu update bracket
+                        processBracketWinners();
                     }
                 }, (error) => {
                     console.error("Error listening to currentBracket document:", error);
@@ -3281,18 +3297,14 @@
                         return;
                     }
 
-                    player1Select.innerHTML = '';
-                    player2Select.innerHTML = '';
+                    // Clear existing options except the first "Select Player"
+                    Array.from(player1Select.options).forEach((option, index) => {
+                        if (index > 0) option.remove();
+                    });
+                    Array.from(player2Select.options).forEach((option, index) => {
+                        if (index > 0) option.remove();
+                    });
 
-                    const defaultOption1 = document.createElement('option');
-                    defaultOption1.value = '';
-                    defaultOption1.textContent = 'Select Player';
-                    player1Select.appendChild(defaultOption1);
-
-                    const defaultOption2 = document.createElement('option');
-                    defaultOption2.value = '';
-                    defaultOption2.textContent = 'Select Player';
-                    player2Select.appendChild(defaultOption2);
 
                     let playersToPopulate = [];
                     if (bracketType === 'singles') {
@@ -3354,10 +3366,14 @@
         function changeTab(tab) {
             // Hentikan live score saat mengganti tab
             if (liveMatchId) {
-                liveMatchId = null; // Set liveMatchId ke null
-                if (isAdmin) { // Hanya admin yang boleh menyimpan perubahan ini ke Firestore
-                    saveData();
+                // Set liveMatchId ke null di Firestore
+                if (isAdmin) {
+                    db.collection('config').doc('liveMatch').set({
+                        liveMatchId: null,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
                 }
+                liveMatchId = null; // Set liveMatchId lokal ke null
             }
             closeLiveScore(); // Tutup scoreboard secara visual
 
@@ -3377,15 +3393,6 @@
             // Hanya admin yang bisa memilih pertandingan live
             if (!isAdmin) {
                 alert("Only administrators can select live matches.");
-                return;
-            }
-
-            // Jika pertandingan yang sama diklik lagi, berarti admin ingin menghentikan live score
-            if (liveMatchId === matchId) {
-                // Hentikan live score
-                liveMatchId = null;
-                closeLiveScore(); // Tutup scoreboard
-                saveData(); // Simpan status liveMatchId = null ke Firestore
                 return;
             }
 
@@ -3427,7 +3434,6 @@
         }
 
         function closeLiveScore() {
-            // Fungsi ini dipanggil ketika live score dihentikan (baik oleh admin atau karena tab diganti)
             if (liveMatchId) {
                 const currentLiveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
                 if (currentLiveMatchElement) {
@@ -3441,8 +3447,10 @@
             document.getElementById('live-scoreboard').classList.add('hidden');
             clearInterval(matchInterval);
             matchInterval = null;
-            // liveMatchId tidak di-null-kan di sini karena bisa jadi dipicu oleh listener Firestore
-            // yang akan mengatur liveMatchId ke null jika admin menghentikannya.
+            liveMatchId = null; // Set liveMatchId lokal ke null
+            // Tidak perlu memanggil saveData() di sini karena sudah dipanggil di toggleLiveScore
+            // atau di changeTab, atau akan dipicu oleh listener Firestore jika admin menghentikannya
+            // dari perangkat lain.
         }
 
         function setupLiveMatchListener() {
@@ -3633,6 +3641,129 @@
             document.getElementById('current-set').textContent = `Set ${currentSet}`;
         }
 
+        // Fungsi untuk meneruskan pemenang ke pertandingan berikutnya
+        function advanceWinner(winnerName, currentMatchId) {
+            const [bracketType, round, matchNum] = currentMatchId.split('-');
+            let nextMatchId = null;
+            let targetPlayerSlot = null; // 1 for player1, 2 for player2
+
+            if (bracketType === 'singles' || bracketType === 'doubles') {
+                if (round === 'qf') {
+                    const qfMatchNum = parseInt(matchNum);
+                    if (qfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 2;
+                    } else if (qfMatchNum === 3) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 4) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 2;
+                    }
+                } else if (round === 'sf') {
+                    const sfMatchNum = parseInt(matchNum);
+                    if (sfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 1;
+                    } else if (sfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 2;
+                    }
+                }
+            } else if (bracketType === 'mix-doubles') {
+                if (round === 'r16') {
+                    const r16MatchNum = parseInt(matchNum);
+                    if (r16MatchNum === 1) {
+                        nextMatchId = `${bracketType}-qf1`;
+                        targetPlayerSlot = 1;
+                    } else if (r16MatchNum === 2) {
+                        nextMatchId = `${bracketType}-qf1`;
+                        targetPlayerSlot = 2;
+                    } else if (r16MatchNum === 3) {
+                        nextMatchId = `${bracketType}-qf2`;
+                        targetPlayerSlot = 1;
+                    }
+                    // Handle byes for mix-doubles
+                    // If r16-bye1 is the winner, it goes to mix-doubles-qf2 player 2
+                    // If r16-bye2 is the winner, it goes to mix-doubles-qf3 player 1
+                    // This assumes byes are handled by simply advancing the player who got the bye
+                    // For now, we'll assume byes are not "matches" that trigger advanceWinner
+                    // but rather pre-filled slots.
+                } else if (round === 'qf') {
+                    const qfMatchNum = parseInt(matchNum);
+                    if (qfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 2;
+                    } else if (qfMatchNum === 3) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 4) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 2;
+                    }
+                } else if (round === 'sf') {
+                    const sfMatchNum = parseInt(matchNum);
+                    if (sfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 1;
+                    } else if (sfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 2;
+                    }
+                }
+            }
+
+            if (nextMatchId && targetPlayerSlot) {
+                const nextMatchElement = document.querySelector(`.match[data-match-id="${nextMatchId}"]`);
+                if (nextMatchElement) {
+                    const targetSelect = nextMatchElement.querySelector(`.player[data-player="${targetPlayerSlot}"] .player-name-select`);
+                    if (targetSelect && targetSelect.value !== winnerName) {
+                        // Add option if not exists
+                        if (!Array.from(targetSelect.options).some(opt => opt.value === winnerName)) {
+                            const newOption = document.createElement('option');
+                            newOption.value = winnerName;
+                            newOption.textContent = winnerName;
+                            targetSelect.appendChild(newOption);
+                        }
+                        targetSelect.value = winnerName;
+                        console.log(`Advanced ${winnerName} from ${currentMatchId} to ${nextMatchId} slot ${targetPlayerSlot}`);
+                        // Trigger change event to ensure UI updates and data is saved
+                        targetSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+            }
+        }
+
+        // Fungsi untuk memproses semua pemenang di bracket
+        function processBracketWinners() {
+            ['singles', 'doubles', 'mix-doubles'].forEach(bracketType => {
+                const bracketElement = document.getElementById(`${bracketType}-bracket`);
+                if (!bracketElement) return;
+
+                // Urutan pemrosesan penting: R16 -> QF -> SF -> Final
+                const roundsInOrder = ['r16', 'qf', 'sf', 'final'];
+
+                roundsInOrder.forEach(roundPrefix => {
+                    bracketElement.querySelectorAll(`.match[data-match-id^="${bracketType}-${roundPrefix}"]`).forEach(match => {
+                        const matchId = match.getAttribute('data-match-id');
+                        const matchData = JSON.parse(match.dataset.matchData || '{}');
+                        const matchWinner = matchData.matchWinner;
+
+                        if (matchWinner) {
+                            advanceWinner(matchWinner, matchId);
+                        }
+                    });
+                });
+            });
+        }
+
+
         function updateWinner(event) {
             const match = event.target.closest('.match');
             if (!match) return;
@@ -3652,6 +3783,8 @@
             let p1SetWins = 0;
             let p2SetWins = 0;
             const setWinners = [];
+            let matchCompleted = false;
+            let matchWinner = null;
 
             for (let i = 0; i < Math.min(p1ScoreInputs.length, p2ScoreInputs.length); i++) {
                 const p1s = parseInt(p1ScoreInputs[i].value);
@@ -3671,13 +3804,20 @@
             player1Div.classList.remove('winner');
             player2Div.classList.remove('winner');
 
-            if (p1SetWins > p2SetWins) {
+            if (p1SetWins >= 2) { // Best of 3 sets, so 2 wins means match won
                 player1Div.classList.add('winner');
-            } else if (p2SetWins > p1SetWins) {
+                matchWinner = player1Select.value;
+                matchCompleted = true;
+            } else if (p2SetWins >= 2) { // Best of 3 sets, so 2 wins means match won
                 player2Div.classList.add('winner');
+                matchWinner = player2Select.value;
+                matchCompleted = true;
             }
 
-            match.dataset.matchData = JSON.stringify({ setWinners: setWinners });
+            match.dataset.matchData = JSON.stringify({
+                setWinners: setWinners,
+                matchWinner: matchWinner // Simpan pemenang pertandingan
+            });
 
             if (liveMatchId === match.getAttribute('data-match-id')) {
                 let activeSetFound = false;
@@ -3693,12 +3833,18 @@
                 }
 
                 updateLiveScoreboard(match);
-                if (p1SetWins >= 2 || p2SetWins >= 2) {
+                if (matchCompleted) {
                     document.getElementById('match-status').textContent = 'Match Completed';
                 } else {
                     document.getElementById('match-status').textContent = 'Playing';
                 }
             }
+
+            // Jika pertandingan selesai, panggil advanceWinner
+            if (matchCompleted && matchWinner) {
+                advanceWinner(matchWinner, match.getAttribute('data-match-id'));
+            }
+
             saveData();
         }
 
