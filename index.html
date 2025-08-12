@@ -420,7 +420,7 @@
         }
 
         /* Connector styles for bracket lines */
-        .qf-sf-connector, .sf-final-connector, .r16-qf-connector, .sf-3rd-connector {
+        .qf-sf-connector, .sf-final-connector, .r16-qf-connector {
             position: relative;
             width: 60px; /* Lebar konektor */
             display: flex;
@@ -430,7 +430,7 @@
             flex-shrink: 0; /* Pastikan konektor tidak menyusut */
         }
 
-        .qf-sf-connector .h-line, .sf-final-connector .h-line, .r16-qf-connector .h-line, .sf-3rd-connector .h-line {
+        .qf-sf-connector .h-line, .sf-final-connector .h-line, .r16-qf-connector .h-line {
             height: 3px; /* Lebih tebal */
             width: 100%;
             background-color: #8B0000; /* Merah gelap */
@@ -439,7 +439,7 @@
             box-shadow: 0 0 5px rgba(0,0,0,0.3); /* Bayangan pada garis */
         }
 
-        .qf-sf-connector .v-line, .sf-final-connector .v-line, .r16-qf-connector .v-line, .sf-3rd-connector .v-line {
+        .qf-sf-connector .v-line, .sf-final-connector .v-line, .r16-qf-connector .v-line {
             width: 3px; /* Lebih tebal */
             background-color: #8B0000; /* Merah gelap */
             position: absolute;
@@ -450,12 +450,12 @@
 
         /* Penyesuaian posisi garis agar sesuai dengan ukuran match yang lebih besar */
         /* Menggunakan calc() dengan variabel CSS atau nilai yang lebih adaptif */
-        .qf-sf-connector .v-line-top, .r16-qf-connector .v-line-top, .sf-3rd-connector .v-line-top {
+        .qf-sf-connector .v-line-top, .r16-qf-connector .v-line-top {
             top: calc(1rem + 1px); /* Padding match + border */
             height: calc(50% - 1rem - 1px + 1.2rem); /* Setengah tinggi round - padding - border + match padding */
         }
 
-        .qf-sf-connector .v-line-bottom, .r16-qf-connector .v-line-bottom, .sf-3rd-connector .v-line-bottom {
+        .qf-sf-connector .v-line-bottom, .r16-qf-connector .v-line-bottom {
             bottom: calc(1rem + 1px); /* Padding match + border */
             height: calc(50% - 1rem - 1px + 1.2rem); /* Setengah tinggi round - padding - border + match padding */
         }
@@ -652,90 +652,6 @@
             white-space: nowrap;
         }
 
-        /* Champions Tab Styles */
-        #champions-tab-content {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 2rem;
-            margin: 2rem auto;
-            max-width: 900px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-            text-align: center;
-        }
-
-        .champion-category {
-            margin-bottom: 2.5rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 2px solid #eee;
-        }
-
-        .champion-category:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
-        .champion-category h2 {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2.5rem;
-            color: #8B0000;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-        }
-
-        .champion-list {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .champion-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            background: #fefefe;
-            border-radius: 10px;
-            padding: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            width: 250px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .champion-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.15);
-        }
-
-        .champion-item .medal-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1rem;
-        }
-
-        .champion-item .medal-icon.gold {
-            filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.8));
-        }
-        .champion-item .medal-icon.silver {
-            filter: drop-shadow(0 0 8px rgba(192, 192, 192, 0.8));
-        }
-        .champion-item .medal-icon.bronze {
-            filter: drop-shadow(0 0 8px rgba(205, 127, 50, 0.8));
-        }
-
-        .champion-item h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .champion-item p {
-            font-size: 1.1rem;
-            color: #555;
-            font-weight: 500;
-        }
-
         /* --- Mobile Optimizations --- */
         @media (max-width: 768px) {
             body {
@@ -835,8 +751,7 @@
 
             .qf-sf-connector,
             .sf-final-connector,
-            .r16-qf-connector,
-            .sf-3rd-connector { /* Sembunyikan konektor di mobile */
+            .r16-qf-connector { /* Sembunyikan konektor di mobile */
                 display: none;
             }
 
@@ -903,25 +818,6 @@
                 font-size: 0.7rem;
                 padding: 3px 8px;
             }
-
-            #champions-tab-content {
-                padding: 1rem;
-                margin: 1rem auto;
-            }
-
-            .champion-category h2 {
-                font-size: 1.8rem;
-            }
-
-            .champion-list {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .champion-item {
-                width: 90%;
-                margin: 0 auto;
-            }
         }
     </style>
 </head>
@@ -982,7 +878,6 @@
         <div class="tab active" onclick="changeTab('singles')">Men's Singles</div>
         <div class="tab" onclick="changeTab('doubles')">Men's Doubles</div>
         <div class="tab" onclick="changeTab('mix-doubles')">Mix Doubles</div>
-        <div class="tab" onclick="changeTab('champions')">Champions</div>
     </div>
 
     <div id="singles-bracket" class="bracket">
@@ -1482,10 +1377,10 @@
             <div class="v-line" style="top: calc(1rem + 1px);"></div>
         </div>
 
-        <!-- Final -->
+        <!-- NEW: 3rd Place Match for Singles -->
         <div class="round">
-            <h3 class="text-center font-semibold mb-4">Final</h3>
-            <div class="match" data-match-id="singles-final" onclick="toggleLiveScore('singles-final')">
+            <h3 class="text-center font-semibold mb-4">3rd Place Match</h3>
+            <div class="match" data-match-id="singles-3rd-place" onclick="toggleLiveScore('singles-3rd-place')">
                 <div class="player" data-player="1">
                     <select class="player-name-select" data-player-select="1" disabled></select>
                     <div class="score-container">
@@ -1565,17 +1460,16 @@
             </div>
         </div>
 
-        <!-- Connector Semi Finals to 3rd Place -->
-        <div class="sf-3rd-connector">
+        <!-- Connector 3rd Place to Final (Optional, but good for visual flow) -->
+        <div class="sf-final-connector">
             <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+            <div class="v-line" style="top: calc(1rem + 1px);"></div>
         </div>
 
-        <!-- 3rd Place Match -->
+        <!-- Final -->
         <div class="round">
-            <h3 class="text-center font-semibold mb-4">3rd Place</h3>
-            <div class="match" data-match-id="singles-3rd" onclick="toggleLiveScore('singles-3rd')">
+            <h3 class="text-center font-semibold mb-4">Final</h3>
+            <div class="match" data-match-id="singles-final" onclick="toggleLiveScore('singles-final')">
                 <div class="player" data-player="1">
                     <select class="player-name-select" data-player-select="1" disabled></select>
                     <div class="score-container">
@@ -2153,10 +2047,10 @@
             <div class="v-line" style="top: calc(1rem + 1px);"></div>
         </div>
 
-        <!-- Final -->
+        <!-- NEW: 3rd Place Match for Doubles -->
         <div class="round">
-            <h3 class="text-center font-semibold mb-4">Final</h3>
-            <div class="match" data-match-id="doubles-final" onclick="toggleLiveScore('doubles-final')">
+            <h3 class="text-center font-semibold mb-4">3rd Place Match</h3>
+            <div class="match" data-match-id="doubles-3rd-place" onclick="toggleLiveScore('doubles-3rd-place')">
                 <div class="player" data-player="1">
                     <select class="player-name-select" data-player-select="1" disabled></select>
                     <div class="score-container">
@@ -2236,17 +2130,16 @@
             </div>
         </div>
 
-        <!-- Connector Semi Finals to 3rd Place -->
-        <div class="sf-3rd-connector">
+        <!-- Connector 3rd Place to Final (Optional, but good for visual flow) -->
+        <div class="sf-final-connector">
             <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+            <div class="v-line" style="top: calc(1rem + 1px);"></div>
         </div>
 
-        <!-- 3rd Place Match -->
+        <!-- Final -->
         <div class="round">
-            <h3 class="text-center font-semibold mb-4">3rd Place</h3>
-            <div class="match" data-match-id="doubles-3rd" onclick="toggleLiveScore('doubles-3rd')">
+            <h3 class="text-center font-semibold mb-4">Final</h3>
+            <div class="match" data-match-id="doubles-final" onclick="toggleLiveScore('doubles-final')">
                 <div class="player" data-player="1">
                     <select class="player-name-select" data-player-select="1" disabled></select>
                     <div class="score-container">
@@ -2568,401 +2461,10 @@
                     </div>
                 </div>
             </div>
-            <!-- Match 4 -->
-            <div class="match" data-match-id="mix-doubles-r16-4" onclick="toggleLiveScore('mix-doubles-r16-4')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Match 5 -->
-            <div class="match" data-match-id="mix-doubles-r16-5" onclick="toggleLiveScore('mix-doubles-r16-5')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Match 6 -->
-            <div class="match" data-match-id="mix-doubles-r16-6" onclick="toggleLiveScore('mix-doubles-r16-6')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Match 7 -->
-            <div class="match" data-match-id="mix-doubles-r16-7" onclick="toggleLiveScore('mix-doubles-r16-7')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Match 8 -->
-            <div class="match" data-match-id="mix-doubles-r16-8" onclick="toggleLiveScore('mix-doubles-r16-8')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <!-- Placeholder for Bye 1 -->
+            <div class="match" data-match-id="mix-doubles-r16-bye1" style="visibility: hidden; margin: 1rem 0;"></div>
+            <!-- Placeholder for Bye 2 -->
+            <div class="match" data-match-id="mix-doubles-r16-bye2" style="visibility: hidden; margin: 1rem 0;"></div>
         </div>
 
         <!-- Connector Round of 16 to Quarter Finals -->
@@ -2970,8 +2472,6 @@
             <!-- Horizontal lines connecting to QF matches -->
             <div class="h-line top-match" style="top: calc(1rem + 1px + 50% - 1px);"></div>
             <div class="h-line bottom-match" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px + 4 * (var(--match-height) + 2rem));"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 6 * (var(--match-height) + 2rem));"></div>
             <!-- Vertical lines connecting to R16 matches -->
             <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
             <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
@@ -3386,166 +2886,8 @@
                     </div>
                 </div>
             </div>
-
+            <!-- NEW: Mix Doubles Semi Final 2 -->
             <div class="match" data-match-id="mix-doubles-sf2" onclick="toggleLiveScore('mix-doubles-sf2')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="match" data-match-id="mix-doubles-sf3" onclick="toggleLiveScore('mix-doubles-sf3')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="match" data-match-id="mix-doubles-sf4" onclick="toggleLiveScore('mix-doubles-sf4')">
                 <div class="player" data-player="1">
                     <select class="player-name-select" data-player-select="1" disabled></select>
                     <div class="score-container">
@@ -3625,7 +2967,96 @@
             </div>
         </div>
 
-        <!-- Connector Semi Finals to Final -->
+        <!-- Connector Semi Finals to 3rd Place -->
+        <div class="sf-final-connector">
+            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
+            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+        </div>
+
+        <!-- NEW: 3rd Place Match -->
+        <div class="round">
+            <h3 class="text-center font-semibold mb-4">3rd Place Match</h3>
+            <div class="match" data-match-id="mix-doubles-3rd-place" onclick="toggleLiveScore('mix-doubles-3rd-place')">
+                <div class="player" data-player="1">
+                    <select class="player-name-select" data-player-select="1" disabled></select>
+                    <div class="score-container">
+                        <div class="score-input-wrapper">
+                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
+                            <div class="score-controls">
+                                <div class="score-up" data-set="1" data-player="1">
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+                                </div>
+                                <div class="score-down" data-set="1" data-player="1">
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-input-wrapper">
+                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
+                            <div class="score-controls">
+                                <div class="score-up" data-set="2" data-player="1">
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+                                </div>
+                                <div class="score-down" data-set="2" data-player="1">
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-input-wrapper">
+                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
+                            <div class="score-controls">
+                                <div class="score-up" data-set="3" data-player="1">
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+                                </div>
+                                <div class="score-down" data-set="3" data-player="1">
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="player" data-player="2">
+                    <select class="player-name-select" data-player-select="2" disabled></select>
+                    <div class="score-container">
+                        <div class="score-input-wrapper">
+                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
+                            <div class="score-controls">
+                                <div class="score-up" data-set="1" data-player="2">
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+                                </div>
+                                <div class="score-down" data-set="1" data-player="2">
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-input-wrapper">
+                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
+                            <div class="score-controls">
+                                <div class="score-up" data-set="2" data-player="2">
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+                                </div>
+                                <div class="score-down" data-set="2" data-player="2">
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="score-input-wrapper">
+                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
+                            <div class="score-controls">
+                                <div class="score-up" data-set="3" data-player="2">
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
+                                </div>
+                                <div class="score-down" data-set="3" data-player="2">
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Connector 3rd Place to Final (Optional, but good for visual flow) -->
         <div class="sf-final-connector">
             <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
             <div class="v-line" style="top: calc(1rem + 1px);"></div>
@@ -3713,163 +3144,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Connector Semi Finals to 3rd Place -->
-        <div class="sf-3rd-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
-        </div>
-
-        <!-- 3rd Place Match -->
-        <div class="round">
-            <h3 class="text-center font-semibold mb-4">3rd Place</h3>
-            <div class="match" data-match-id="mix-doubles-3rd" onclick="toggleLiveScore('mix-doubles-3rd')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <div id="champions-tab-content" class="hidden">
-        <div class="champion-category">
-            <h2>Men's Singles Champions</h2>
-            <div class="champion-list">
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gold_medal_icon.svg/1200px-Gold_medal_icon.svg.png" alt="Gold Medal" class="medal-icon gold">
-                    <h3>1st Place</h3>
-                    <p id="singles-champion-1">TBD</p>
-                </div>
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Silver_medal_icon.svg/1200px-Silver_medal_icon.svg.png" alt="Silver Medal" class="medal-icon silver">
-                    <h3>2nd Place</h3>
-                    <p id="singles-champion-2">TBD</p>
-                </div>
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bronze_medal_icon.svg/1200px-Bronze_medal_icon.svg.png" alt="Bronze Medal" class="medal-icon bronze">
-                    <h3>3rd Place</h3>
-                    <p id="singles-champion-3">TBD</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="champion-category">
-            <h2>Men's Doubles Champions</h2>
-            <div class="champion-list">
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gold_medal_icon.svg/1200px-Gold_medal_icon.svg.png" alt="Gold Medal" class="medal-icon gold">
-                    <h3>1st Place</h3>
-                    <p id="doubles-champion-1">TBD</p>
-                </div>
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Silver_medal_icon.svg/1200px-Silver_medal_icon.svg.png" alt="Silver Medal" class="medal-icon silver">
-                    <h3>2nd Place</h3>
-                    <p id="doubles-champion-2">TBD</p>
-                </div>
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bronze_medal_icon.svg/1200px-Bronze_medal_icon.svg.png" alt="Bronze Medal" class="medal-icon bronze">
-                    <h3>3rd Place</h3>
-                    <p id="doubles-champion-3">TBD</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="champion-category">
-            <h2>Mix Doubles Champions</h2>
-            <div class="champion-list">
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Gold_medal_icon.svg/1200px-Gold_medal_icon.svg.png" alt="Gold Medal" class="medal-icon gold">
-                    <h3>1st Place</h3>
-                    <p id="mix-doubles-champion-1">TBD</p>
-                </div>
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Silver_medal_icon.svg/1200px-Silver_medal_icon.svg.png" alt="Silver Medal" class="medal-icon silver">
-                    <h3>2nd Place</h3>
-                    <p id="mix-doubles-champion-2">TBD</p>
-                </div>
-                <div class="champion-item">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Bronze_medal_icon.svg/1200px-Bronze_medal_icon.svg.png" alt="Bronze Medal" class="medal-icon bronze">
-                    <h3>3rd Place</h3>
-                    <p id="mix-doubles-champion-3">TBD</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <div id="live-scoreboard" class="live-scoreboard hidden">
         <div class="live-scoreboard-header">
@@ -3951,20 +3226,11 @@
                 'r16-1': ['ANDI S & MAIDA', 'WAHYU A & ANISA'],
                 'r16-2': ['FADIL & ANGGI', 'BINTANG & WINDA'],
                 'r16-3': ['RENI & PUTRA', 'DAYAT & TANIA'],
-                'r16-4': ['HUSNI & TUTI', 'GALIH & MARIA'],
-                'r16-5': ['ANDY R & ROSSIANA', 'EDWIN & ARIFA'],
-                'r16-6': ['RAKA & KARTIKA', 'Player A & Player B'], // Example additional players
-                'r16-7': ['Player C & Player D', 'Player E & Player F'],
-                'r16-8': ['Player G & Player H', 'Player I & Player J'],
                 'all-mix-players': [
                     'ANDI S & MAIDA', 'WAHYU A & ANISA',
                     'FADIL & ANGGI', 'BINTANG & WINDA',
                     'RENI & PUTRA', 'DAYAT & TANIA',
-                    'HUSNI & TUTI', 'GALIH & MARIA',
-                    'ANDY R & ROSSIANA', 'EDWIN & ARIFA',
-                    'RAKA & KARTIKA', 'Player A & Player B',
-                    'Player C & Player D', 'Player E & Player F',
-                    'Player G & Player H', 'Player I & Player J'
+                    'HUSNI & TUTI', 'GALIH & MARIA', 'ANDY R & ROSSIANA', 'EDWIN & ARIFA', 'RAKA & KARTIKA'
                 ]
             }
         };
@@ -4100,8 +3366,7 @@
 
                     const matchDataset = JSON.parse(match.dataset.matchData || '{}');
                     const setWinners = matchDataset.setWinners || [];
-                    const matchWinner = matchDataset.matchWinner || null;
-                    const matchLoser = matchDataset.matchLoser || null; // Simpan yang kalah juga
+                    const matchWinner = matchDataset.matchWinner || null; // Tambahkan matchWinner
 
                     matchesData[matchId] = {
                         player1: player1Select.value,
@@ -4111,25 +3376,926 @@
                         isWinner1: isWinner1,
                         isWinner2: isWinner2,
                         setWinners: setWinners,
-                        matchWinner: matchWinner,
-                        matchLoser: matchLoser // Simpan yang kalah
+                        matchWinner: matchWinner // Simpan matchWinner
                     };
                 });
                 allBracketData[bracketId] = matchesData;
             });
 
-            // Save champions data
-            const championsData = {
-                'singles': {
-                    '1st': document.getElementById('singles-champion-1').textContent,
-                    '2nd': document.getElementById('singles-champion-2').textContent,
-                    '3rd': document.getElementById('singles-champion-3').textContent
-                },
-                'doubles': {
-                    '1st': document.getElementById('doubles-champion-1').textContent,
-                    '2nd': document.getElementById('doubles-champion-2').textContent,
-                    '3rd': document.getElementById('doubles-champion-3').textContent
-                },
-                'mix-doubles': {
-                    '1st': document.getElementById('mix-doubles-champion-1').textContent,
-                    '2nd': document.getElementById('mix-doubles-champion-
+            console.log("Data to be saved:", allBracketData);
+
+            try {
+                await db.collection('tournamentData').doc('currentBracket').set(allBracketData);
+
+                // Simpan juga liveMatchId saat ini
+                await db.collection('config').doc('liveMatch').set({
+                    liveMatchId: liveMatchId, // liveMatchId adalah variabel global yang sudah ada
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp() // Opsional: untuk melacak kapan diupdate
+                });
+
+                console.log("Data successfully written to Firestore!");
+            }
+            catch (error) {
+                console.error("Error writing document to Firestore: ", error);
+            }
+        }
+
+        // Function to load all bracket data from Firestore
+        async function loadData() {
+            console.log("Attempting to load data from Firestore...");
+            try {
+                const doc = await db.collection('tournamentData').doc('currentBracket').get();
+                if (doc.exists) {
+                    const allBracketData = doc.data();
+                    console.log("Data successfully loaded from Firestore:", allBracketData);
+                    updateUIFromFirestoreSnapshot(allBracketData); // Panggil fungsi untuk update UI
+                } else {
+                    console.log("No 'currentBracket' document found in 'tournamentData' collection. Saving initial data.");
+                    await saveData(); // Save initial data if document doesn't exist
+                }
+            } catch (error) {
+                console.error("Error getting document from Firestore: ", error);
+            }
+        }
+
+        // Fungsi untuk memperbarui UI dari snapshot Firestore
+        function updateUIFromFirestoreSnapshot(allBracketData) {
+            for (const bracketId in allBracketData) {
+                const bracketElement = document.getElementById(bracketId);
+                if (!bracketElement) continue;
+
+                const matchesData = allBracketData[bracketId];
+                for (const matchId in matchesData) {
+                    const match = bracketElement.querySelector(`.match[data-match-id="${matchId}"]`);
+                    if (!match || matchesData[matchId].isPlaceholder) continue;
+
+                    const data = matchesData[matchId];
+                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                    const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
+                    const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
+                    const player1Div = match.querySelector('.player[data-player="1"]');
+                    const player2Div = match.querySelector('.player[data-player="2"]');
+
+                    // Update dropdown values (hanya jika berbeda untuk menghindari reset fokus admin)
+                    if (player1Select) { // Tambahkan cek null
+                        if (data.player1 && player1Select.value !== data.player1) {
+                            // Tambahkan opsi jika belum ada
+                            if (!Array.from(player1Select.options).some(opt => opt.value === data.player1)) {
+                                const newOption = document.createElement('option');
+                                newOption.value = data.player1;
+                                newOption.textContent = data.player1;
+                                player1Select.appendChild(newOption);
+                            }
+                            player1Select.value = data.player1;
+                        } else if (!data.player1) { // Jika data.player1 null/kosong, reset select
+                            player1Select.value = '';
+                        }
+                    }
+                    if (player2Select) { // Tambahkan cek null
+                        if (data.player2 && player2Select.value !== data.player2) {
+                            // Tambahkan opsi jika belum ada
+                            if (!Array.from(player2Select.options).some(opt => opt.value === data.player2)) {
+                                const newOption = document.createElement('option');
+                                newOption.value = data.player2;
+                                newOption.textContent = data.player2;
+                                player2Select.appendChild(newOption);
+                            }
+                            player2Select.value = data.player2;
+                        } else if (!data.player2) { // Jika data.player2 null/kosong, reset select
+                            player2Select.value = '';
+                        }
+                    }
+
+
+                    // Update scores
+                    p1ScoreInputs.forEach((input, i) => {
+                        if (data.scores1 && data.scores1[i] !== undefined && parseInt(input.value) !== data.scores1[i]) {
+                            input.value = data.scores1[i];
+                        }
+                    });
+                    p2ScoreInputs.forEach((input, i) => {
+                        if (data.scores2 && data.scores2[i] !== undefined && parseInt(input.value) !== data.scores2[i]) {
+                            input.value = data.scores2[i];
+                        }
+                    });
+
+                    // Update winner class
+                    if (player1Div) {
+                        if (data.isWinner1) player1Div.classList.add('winner');
+                        else player1Div.classList.remove('winner');
+                    }
+                    if (player2Div) {
+                        if (data.isWinner2) player2Div.classList.add('winner');
+                        else player2Div.classList.remove('winner');
+                    }
+
+                    // Update dataset for setWinners and matchWinner
+                    match.dataset.matchData = JSON.stringify({
+                        setWinners: data.setWinners || [],
+                        matchWinner: data.matchWinner || null // Load matchWinner
+                    });
+
+                    // Jika pertandingan ini adalah pertandingan live saat ini, perbarui scoreboard live
+                    if (matchId === liveMatchId) {
+                        updateLiveScoreboard(match);
+                    }
+                }
+            }
+        }
+
+
+        // Modifikasi initTournament untuk memanggil setInputsDisabled di awal
+        async function initTournament() {
+            console.log("Initializing tournament...");
+            // Nonaktifkan semua input secara default saat inisialisasi
+            setInputsDisabled(true);
+
+            document.querySelectorAll('.score-input').forEach(input => {
+                input.addEventListener('change', updateWinner);
+                input.addEventListener('input', updateLiveScoreboardOnInput);
+                input.addEventListener('change', saveData);
+            });
+
+            // Add event listeners for score controls
+            document.querySelectorAll('.score-up').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const input = event.target.closest('.score-input-wrapper').querySelector('.score-input');
+                    if (!input.disabled) { // Only allow if input is not disabled
+                        let currentValue = parseInt(input.value);
+                        if (currentValue < 30) {
+                            input.value = currentValue + 1;
+                            input.dispatchEvent(new Event('change')); // Trigger change to update winner/save data
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.score-down').forEach(button => {
+                button.addEventListener('click', (event) => {
+                    const input = event.target.closest('.score-input-wrapper').querySelector('.score-input');
+                    if (!input.disabled) { // Only allow if input is not disabled
+                        let currentValue = parseInt(input.value);
+                        if (currentValue > 0) {
+                            input.value = currentValue - 1;
+                            input.dispatchEvent(new Event('change')); // Trigger change to update winner/save data
+                        }
+                    }
+                });
+            });
+
+            document.querySelectorAll('.player-name-select').forEach(select => {
+                select.addEventListener('change', updateLiveScoreboardOnInput);
+                select.addEventListener('change', saveData);
+            });
+
+            populateAllPlayerDropdowns();
+            await loadData(); // Pastikan data bracket dimuat terlebih dahulu
+
+            // Tambahkan listener untuk liveMatchId
+            setupLiveMatchListener();
+
+            // Tambahkan listener untuk perubahan data bracket secara realtime
+            db.collection('tournamentData').doc('currentBracket')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const allBracketData = doc.data();
+                        updateUIFromFirestoreSnapshot(allBracketData);
+                        // Setelah UI diperbarui, jalankan logika untuk meneruskan pemenang
+                        // Ini penting agar perubahan dari Firestore juga memicu update bracket
+                        processBracketWinners();
+                    }
+                }, (error) => {
+                    console.error("Error listening to currentBracket document:", error);
+                });
+
+
+            const savedTab = localStorage.getItem('currentTab');
+            if (savedTab) {
+                changeTab(savedTab);
+                console.log(`Switched to saved tab: ${savedTab}`);
+            } else {
+                changeTab('singles');
+                console.log("No saved tab found, defaulting to singles.");
+            }
+            console.log("Tournament initialization complete.");
+
+            setMatchHeightCssVariable();
+            window.addEventListener('resize', setMatchHeightCssVariable);
+
+            createParticles(80); // Lebih banyak partikel
+            setInterval(createFirework, 3000); // Kembang api lebih sering
+        }
+
+        // Function to dynamically set CSS variable for match height
+        function setMatchHeightCssVariable() {
+            const sampleMatch = document.querySelector('.match');
+            if (sampleMatch) {
+                const matchHeight = sampleMatch.offsetHeight;
+                document.documentElement.style.setProperty('--match-height', `${matchHeight}px`);
+                console.log("Match height CSS variable set to:", matchHeight);
+            }
+        }
+
+        // Function to create background particles
+        function createParticles(num = 50) { // Tambahkan parameter num
+            const container = document.querySelector('.background-particles');
+            container.innerHTML = ''; // Bersihkan partikel lama jika ada
+            const numParticles = num; // Gunakan parameter num
+
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                const size = Math.random() * 8 + 7; // Ukuran lebih bervariasi dan sedikit lebih besar
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                particle.style.animationDuration = `${Math.random() * 6 + 6}s`; // Durasi lebih panjang
+                particle.style.animationDelay = `${Math.random() * 6}s`; // Delay lebih panjang
+                container.appendChild(particle);
+            }
+        }
+
+        // Function to create firework effect
+        function createFirework() {
+            const firework = document.createElement('div');
+            firework.classList.add('firework');
+            firework.style.left = `${Math.random() * 80 + 10}vw`;
+            firework.style.top = `${Math.random() * 40 + 10}vh`;
+            document.body.appendChild(firework);
+
+            firework.addEventListener('animationend', () => {
+                firework.remove();
+            });
+        }
+
+        // Function to populate player dropdowns for all brackets
+        function populateAllPlayerDropdowns() {
+            ['singles', 'doubles', 'mix-doubles'].forEach(bracketType => {
+                const bracketElement = document.getElementById(`${bracketType}-bracket`);
+                if (!bracketElement) return;
+
+                bracketElement.querySelectorAll('.match').forEach(match => {
+                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+                    if (!player1Select || !player2Select) {
+                        return;
+                    }
+
+                    // Clear existing options except the first "Select Player"
+                    Array.from(player1Select.options).forEach((option, index) => {
+                        if (index > 0) option.remove();
+                    });
+                    Array.from(player2Select.options).forEach((option, index) => {
+                        if (index > 0) option.remove();
+                    });
+
+
+                    let playersToPopulate = [];
+                    if (bracketType === 'singles') {
+                        playersToPopulate = allPlayers;
+                    } else if (bracketType === 'doubles') {
+                        playersToPopulate = [
+                            'RAKA & FADIL ', 'PUTRA & HARYO',
+                            'EDWIN & WAHYU YIB', 'RANGGA & ANDI S',
+                            'ANDY R & GALIH', 'BRIAN & DAYAT',
+                            'QOSIM & WAHYU A', 'HUSNI & BINTANG'
+                        ];
+                    } else if (bracketType === 'mix-doubles') {
+                        playersToPopulate = initialPlayerAssignments['mix-doubles']['all-mix-players'];
+                    }
+
+                    playersToPopulate.forEach(player => {
+                        const option1 = document.createElement('option');
+                        option1.value = player;
+                        option1.textContent = player;
+                        player1Select.appendChild(option1);
+
+                        const option2 = document.createElement('option');
+                        option2.value = player;
+                        option2.textContent = player;
+                        player2Select.appendChild(option2);
+                    });
+
+                    const matchId = match.getAttribute('data-match-id');
+                    if (bracketType === 'singles' && matchId.includes('qf')) {
+                        const initialPlayers = initialPlayerAssignments['singles'][matchId.split('-')[1]];
+                        if (initialPlayers) {
+                            player1Select.value = initialPlayers[0];
+                            player2Select.value = initialPlayers[1];
+                        }
+                    } else if (bracketType === 'doubles' && matchId.includes('qf')) {
+                        const initialPlayers = initialPlayerAssignments['doubles'][matchId.split('-')[1]];
+                        if (initialPlayers) {
+                            player1Select.value = initialPlayers[0];
+                            player2Select.value = initialPlayers[1];
+                        }
+                    } else if (bracketType === 'mix-doubles' && matchId.includes('r16')) {
+                        const initialPlayers = initialPlayerAssignments['mix-doubles'][matchId.split('-')[1]];
+                        if (initialPlayers) {
+                            player1Select.value = initialPlayers[0];
+                            player2Select.value = initialPlayers[1];
+                        }
+                    }
+                });
+            });
+        }
+
+        function updateLiveScoreboardOnInput(event) {
+            const match = event.target.closest('.match');
+            if (liveMatchId === match.getAttribute('data-match-id')) {
+                updateLiveScoreboard(match);
+            }
+        }
+
+        function changeTab(tab) {
+            // Hentikan live score saat mengganti tab
+            if (liveMatchId) {
+                // Set liveMatchId ke null di Firestore
+                if (isAdmin) {
+                    db.collection('config').doc('liveMatch').set({
+                        liveMatchId: null,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                liveMatchId = null; // Set liveMatchId lokal ke null
+            }
+            closeLiveScore(); // Tutup scoreboard secara visual
+
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab[onclick="changeTab('${tab}')"]`).classList.add('active');
+
+            document.getElementById('singles-bracket').classList.add('hidden');
+            document.getElementById('doubles-bracket').classList.add('hidden');
+            document.getElementById('mix-doubles-bracket').classList.add('hidden');
+
+            document.getElementById(`${tab}-bracket`).classList.remove('hidden');
+            localStorage.setItem('currentTab', tab);
+        }
+
+        function toggleLiveScore(matchId) {
+            // Hanya admin yang bisa memilih pertandingan live
+            if (!isAdmin) {
+                alert("Only administrators can select live matches.");
+                return;
+            }
+
+            // Jika ada pertandingan live sebelumnya, hapus kelas 'live-match' dan indikator
+            if (liveMatchId) {
+                const prevLiveMatch = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                if (prevLiveMatch) {
+                    prevLiveMatch.classList.remove('live-match');
+                    const prevIndicator = prevLiveMatch.querySelector('.live-indicator');
+                    if (prevIndicator) {
+                        prevIndicator.remove();
+                    }
+                }
+            }
+
+            // Set pertandingan yang baru sebagai live
+            const match = document.querySelector(`.match[data-match-id="${matchId}"]`);
+            if (match) {
+                match.classList.add('live-match');
+                liveMatchId = matchId; // Update variabel global liveMatchId
+                updateLiveScoreboard(match); // Perbarui tampilan scoreboard lokal
+                currentSet = 1; // Reset set saat memulai live baru
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                document.getElementById('match-status').textContent = 'Playing';
+                updateProgressBar();
+                document.getElementById('live-scoreboard').classList.remove('hidden');
+
+                // Tambahkan live indicator
+                let liveIndicator = match.querySelector('.live-indicator');
+                if (!liveIndicator) {
+                    liveIndicator = document.createElement('div');
+                    liveIndicator.classList.add('live-indicator');
+                    match.appendChild(liveIndicator);
+                }
+
+                // Simpan liveMatchId yang baru ke Firestore
+                saveData();
+            }
+        }
+
+        function closeLiveScore() {
+            if (liveMatchId) {
+                const currentLiveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                if (currentLiveMatchElement) {
+                    currentLiveMatchElement.classList.remove('live-match');
+                    const currentIndicator = currentLiveMatchElement.querySelector('.live-indicator');
+                    if (currentIndicator) {
+                        currentIndicator.remove();
+                    }
+                }
+            }
+            document.getElementById('live-scoreboard').classList.add('hidden');
+            clearInterval(matchInterval);
+            matchInterval = null;
+            liveMatchId = null; // Set liveMatchId lokal ke null
+            // Tidak perlu memanggil saveData() di sini karena sudah dipanggil di toggleLiveScore
+            // atau di changeTab, atau akan dipicu oleh listener Firestore jika admin menghentikannya
+            // dari perangkat lain.
+        }
+
+        function setupLiveMatchListener() {
+            // Hentikan listener sebelumnya jika ada
+            if (unsubscribeLiveMatchListener) {
+                unsubscribeLiveMatchListener();
+            }
+
+            unsubscribeLiveMatchListener = db.collection('config').doc('liveMatch')
+                .onSnapshot(async (doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const newLiveMatchId = data.liveMatchId;
+
+                        // Jika liveMatchId berubah atau baru diatur
+                        if (newLiveMatchId !== liveMatchId) {
+                            // Hapus kelas 'live-match' dan indikator dari pertandingan sebelumnya (jika ada)
+                            if (liveMatchId) {
+                                const prevLiveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                                if (prevLiveMatchElement) {
+                                    prevLiveMatchElement.classList.remove('live-match');
+                                    const prevIndicator = prevLiveMatchElement.querySelector('.live-indicator');
+                                    if (prevIndicator) {
+                                        prevIndicator.remove();
+                                    }
+                                }
+                            }
+
+                            liveMatchId = newLiveMatchId; // Update variabel global
+
+                            if (liveMatchId) {
+                                // Temukan pertandingan yang baru live
+                                const liveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                                if (liveMatchElement) {
+                                    // Pastikan bracket yang sesuai ditampilkan
+                                    const bracketId = liveMatchElement.closest('.bracket').id;
+                                    const tabToActivate = bracketId.replace('-bracket', '');
+                                    if (currentTab !== tabToActivate) {
+                                        // Ganti tab secara otomatis jika pertandingan live ada di tab lain
+                                        // Panggil changeTab tanpa menyimpan ke Firestore lagi
+                                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                                        document.querySelector(`.tab[onclick="changeTab('${tabToActivate}')"]`).classList.add('active');
+
+                                        document.getElementById('singles-bracket').classList.add('hidden');
+                                        document.getElementById('doubles-bracket').classList.add('hidden');
+                                        document.getElementById('mix-doubles-bracket').classList.add('hidden');
+
+                                        document.getElementById(`${tabToActivate}-bracket`).classList.remove('hidden');
+                                        localStorage.setItem('currentTab', tabToActivate);
+                                        currentTab = tabToActivate; // Update currentTab global
+                                    }
+
+                                    liveMatchElement.classList.add('live-match');
+                                    updateLiveScoreboard(liveMatchElement);
+                                    document.getElementById('live-scoreboard').classList.remove('hidden');
+
+                                    // Tambahkan live indicator
+                                    let liveIndicator = liveMatchElement.querySelector('.live-indicator');
+                                    if (!liveIndicator) {
+                                        liveIndicator = document.createElement('div');
+                                        liveIndicator.classList.add('live-indicator');
+                                        liveMatchElement.appendChild(liveIndicator);
+                                    }
+
+                                    console.log(`Live match updated to: ${liveMatchId}`);
+                                } else {
+                                    // Jika pertandingan live tidak ditemukan di UI saat ini (misal, belum dimuat)
+                                    console.warn(`Live match element with ID ${liveMatchId} not found in current DOM.`);
+                                    closeLiveScore(); // Tutup scoreboard jika pertandingan tidak ditemukan
+                                }
+                            } else {
+                                // Jika liveMatchId null, berarti tidak ada pertandingan yang live
+                                closeLiveScore();
+                                console.log("No live match currently selected.");
+                            }
+                        }
+                    } else {
+                        // Dokumen liveMatch tidak ada, berarti tidak ada pertandingan live
+                        if (liveMatchId) {
+                            closeLiveScore();
+                            liveMatchId = null;
+                            console.log("Live match document does not exist.");
+                        }
+                    }
+                }, (error) => {
+                    console.error("Error listening to live match document:", error);
+                });
+        }
+
+
+        function updateLiveScoreboard(match) {
+            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+
+            document.getElementById('live-player-1').textContent = player1Select ? player1Select.value : 'N/A';
+            document.getElementById('live-player-2').textContent = player2Select ? player2Select.value : 'N/A';
+
+            const scores1Container = document.getElementById('live-scores-1');
+            const scores2Container = document.getElementById('live-scores-2');
+
+            scores1Container.innerHTML = '';
+            scores2Container.innerHTML = '';
+
+            const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
+            const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
+
+            let currentSetDisplay = 1;
+            let maxScoreReached = false;
+
+            for (let i = 0; i < p1ScoreInputs.length; i++) {
+                const p1s = parseInt(p1ScoreInputs[i].value);
+                const p2s = parseInt(p2ScoreInputs[i].value);
+
+                const scoreEl1 = document.createElement('div');
+                scoreEl1.className = 'w-8 text-center font-medium';
+                scoreEl1.textContent = p1s;
+                scores1Container.appendChild(scoreEl1);
+
+                const scoreEl2 = document.createElement('div');
+                scoreEl2.className = 'w-8 text-center font-medium';
+                scoreEl2.textContent = p2s;
+                scores2Container.appendChild(scoreEl2);
+
+                // Determine current active set for display
+                if ((p1s > 0 || p2s > 0) && !maxScoreReached) {
+                    currentSetDisplay = i + 1;
+                }
+                if ((p1s >= 21 && (p1s - p2s >= 2 || p1s === 30)) || (p2s >= 21 && (p2s - p1s >= 2 || p2s === 30))) {
+                    maxScoreReached = true; // Set ini sudah selesai
+                    if (i + 1 < p1ScoreInputs.length) { // Jika ada set berikutnya
+                        currentSetDisplay = i + 2; // Pindah ke set berikutnya
+                    }
+                }
+            }
+
+            // Highlight the current active set in the live scoreboard
+            const liveScoreElements1 = scores1Container.children;
+            const liveScoreElements2 = scores2Container.children;
+            if (liveScoreElements1[currentSetDisplay - 1]) {
+                liveScoreElements1[currentSetDisplay - 1].classList.add('text-blue-500');
+            }
+            if (liveScoreElements2[currentSetDisplay - 1]) {
+                liveScoreElements2[currentSetDisplay - 1].classList.add('text-blue-500');
+            }
+
+            currentSet = currentSetDisplay; // Update global currentSet
+            document.getElementById('current-set').textContent = `Set ${currentSet}`;
+
+            updateProgressBar();
+        }
+
+
+        function updateProgressBar() {
+            if (!liveMatchId) return;
+            const match = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+            if (!match) return;
+
+            const player1 = match.querySelector('.player[data-player="1"]');
+            const player2 = match.querySelector('.player[data-player="2"]');
+
+            if (!player1 || !player2) {
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                return;
+            }
+
+            const p1ScoreInput = player1.querySelector(`.score-input[data-set="${currentSet}"]`);
+            const p2ScoreInput = player2.querySelector(`.score-input[data-set="${currentSet}"]`);
+
+            if (!p1ScoreInput || !p2ScoreInput) {
+                document.getElementById('progress-bar').style.width = '0%';
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                return;
+            }
+
+            const p1Score = parseInt(p1ScoreInput.value);
+            const p2Score = parseInt(p2ScoreInput.value);
+
+            const totalPoints = p1Score + p2Score;
+
+            if (totalPoints > 0) {
+                const p1Percentage = (p1Score / totalPoints) * 100;
+                document.getElementById('progress-bar').style.width = `${p1Percentage}%`;
+            } else {
+                document.getElementById('progress-bar').style.width = '0%';
+            }
+
+            document.getElementById('current-set').textContent = `Set ${currentSet}`;
+        }
+
+        // Fungsi untuk meneruskan pemenang ke pertandingan berikutnya
+        function advanceWinner(winnerName, currentMatchId) {
+            const [bracketType, round, matchNum] = currentMatchId.split('-');
+            let nextMatchId = null;
+            let targetPlayerSlot = null; // 1 for player1, 2 for player2
+
+            if (bracketType === 'singles' || bracketType === 'doubles') {
+                if (round === 'qf') {
+                    const qfMatchNum = parseInt(matchNum);
+                    if (qfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 2;
+                    } else if (qfMatchNum === 3) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 4) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 2;
+                    }
+                } else if (round === 'sf') {
+                    const sfMatchNum = parseInt(matchNum);
+                    // Pemenang SF1 ke Final Player 1
+                    if (sfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 1;
+                    }
+                    // Pemenang SF2 ke Final Player 2
+                    else if (sfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 2;
+                    }
+
+                    // Logic for 3rd Place Match
+                    const currentMatchElement = document.querySelector(`.match[data-match-id="${currentMatchId}"]`);
+                    const matchData = JSON.parse(currentMatchElement.dataset.matchData || '{}');
+                    const matchWinner = matchData.matchWinner;
+
+                    let loserName = null;
+                    const player1Name = currentMatchElement.querySelector('.player[data-player="1"] .player-name-select').value;
+                    const player2Name = currentMatchElement.querySelector('.player[data-player="2"] .player-name-select').value;
+
+                    if (matchWinner === player1Name) {
+                        loserName = player2Name;
+                    } else if (matchWinner === player2Name) {
+                        loserName = player1Name;
+                    }
+
+                    if (loserName) {
+                        const thirdPlaceMatchElement = document.querySelector(`.match[data-match-id="${bracketType}-3rd-place"]`);
+                        if (thirdPlaceMatchElement) {
+                            if (sfMatchNum === 1) {
+                                const targetSelect = thirdPlaceMatchElement.querySelector('.player[data-player="1"] .player-name-select');
+                                if (targetSelect && targetSelect.value !== loserName) {
+                                    if (!Array.from(targetSelect.options).some(opt => opt.value === loserName)) {
+                                        const newOption = document.createElement('option');
+                                        newOption.value = loserName;
+                                        newOption.textContent = loserName;
+                                        targetSelect.appendChild(newOption);
+                                    }
+                                    targetSelect.value = loserName;
+                                    console.log(`Advanced ${loserName} (loser of ${currentMatchId}) to ${bracketType}-3rd-place slot 1`);
+                                    targetSelect.dispatchEvent(new Event('change'));
+                                }
+                            } else if (sfMatchNum === 2) {
+                                const targetSelect = thirdPlaceMatchElement.querySelector('.player[data-player="2"] .player-name-select');
+                                if (targetSelect && targetSelect.value !== loserName) {
+                                    if (!Array.from(targetSelect.options).some(opt => opt.value === loserName)) {
+                                        const newOption = document.createElement('option');
+                                        newOption.value = loserName;
+                                        newOption.textContent = loserName;
+                                        targetSelect.appendChild(newOption);
+                                    }
+                                    targetSelect.value = loserName;
+                                    console.log(`Advanced ${loserName} (loser of ${currentMatchId}) to ${bracketType}-3rd-place slot 2`);
+                                    targetSelect.dispatchEvent(new Event('change'));
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (bracketType === 'mix-doubles') {
+                if (round === 'r16') {
+                    const r16MatchNum = parseInt(matchNum);
+                    if (r16MatchNum === 1) {
+                        nextMatchId = `${bracketType}-qf1`;
+                        targetPlayerSlot = 1;
+                    } else if (r16MatchNum === 2) {
+                        nextMatchId = `${bracketType}-qf1`;
+                        targetPlayerSlot = 2;
+                    } else if (r16MatchNum === 3) {
+                        nextMatchId = `${bracketType}-qf2`;
+                        targetPlayerSlot = 1;
+                    }
+                    // Handle byes for mix-doubles
+                    // If r16-bye1 is the winner, it goes to mix-doubles-qf2 player 2
+                    // If r16-bye2 is the winner, it goes to mix-doubles-qf3 player 1
+                    // This assumes byes are handled by simply advancing the player who got the bye
+                    // For now, we'll assume byes are not "matches" that trigger advanceWinner
+                    // but rather pre-filled slots.
+                } else if (round === 'qf') {
+                    const qfMatchNum = parseInt(matchNum);
+                    if (qfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-sf1`;
+                        targetPlayerSlot = 2;
+                    } else if (qfMatchNum === 3) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 1;
+                    } else if (qfMatchNum === 4) {
+                        nextMatchId = `${bracketType}-sf2`;
+                        targetPlayerSlot = 2;
+                    }
+                } else if (round === 'sf') {
+                    const sfMatchNum = parseInt(matchNum);
+                    // Pemenang SF1 ke Final Player 1
+                    if (sfMatchNum === 1) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 1;
+                    }
+                    // Pemenang SF2 ke Final Player 2
+                    else if (sfMatchNum === 2) {
+                        nextMatchId = `${bracketType}-final`;
+                        targetPlayerSlot = 2;
+                    }
+                    // Logic for 3rd Place Match
+                    const currentMatchElement = document.querySelector(`.match[data-match-id="${currentMatchId}"]`);
+                    const matchData = JSON.parse(currentMatchElement.dataset.matchData || '{}');
+                    const matchWinner = matchData.matchWinner;
+
+                    let loserName = null;
+                    const player1Name = currentMatchElement.querySelector('.player[data-player="1"] .player-name-select').value;
+                    const player2Name = currentMatchElement.querySelector('.player[data-player="2"] .player-name-select').value;
+
+                    if (matchWinner === player1Name) {
+                        loserName = player2Name;
+                    } else if (matchWinner === player2Name) {
+                        loserName = player1Name;
+                    }
+
+                    if (loserName) {
+                        const thirdPlaceMatchElement = document.querySelector(`.match[data-match-id="${bracketType}-3rd-place"]`);
+                        if (thirdPlaceMatchElement) {
+                            if (sfMatchNum === 1) {
+                                const targetSelect = thirdPlaceMatchElement.querySelector('.player[data-player="1"] .player-name-select');
+                                if (targetSelect && targetSelect.value !== loserName) {
+                                    if (!Array.from(targetSelect.options).some(opt => opt.value === loserName)) {
+                                        const newOption = document.createElement('option');
+                                        newOption.value = loserName;
+                                        newOption.textContent = loserName;
+                                        targetSelect.appendChild(newOption);
+                                    }
+                                    targetSelect.value = loserName;
+                                    console.log(`Advanced ${loserName} (loser of ${currentMatchId}) to ${bracketType}-3rd-place slot 1`);
+                                    targetSelect.dispatchEvent(new Event('change'));
+                                }
+                            } else if (sfMatchNum === 2) {
+                                const targetSelect = thirdPlaceMatchElement.querySelector('.player[data-player="2"] .player-name-select');
+                                if (targetSelect && targetSelect.value !== loserName) {
+                                    if (!Array.from(targetSelect.options).some(opt => opt.value === loserName)) {
+                                        const newOption = document.createElement('option');
+                                        newOption.value = loserName;
+                                        newOption.textContent = loserName;
+                                        targetSelect.appendChild(newOption);
+                                    }
+                                    targetSelect.value = loserName;
+                                    console.log(`Advanced ${loserName} (loser of ${currentMatchId}) to ${bracketType}-3rd-place slot 2`);
+                                    targetSelect.dispatchEvent(new Event('change'));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (nextMatchId && targetPlayerSlot) {
+                const nextMatchElement = document.querySelector(`.match[data-match-id="${nextMatchId}"]`);
+                if (nextMatchElement) {
+                    const targetSelect = nextMatchElement.querySelector(`.player[data-player="${targetPlayerSlot}"] .player-name-select`);
+                    if (targetSelect && targetSelect.value !== winnerName) {
+                        // Add option if not exists
+                        if (!Array.from(targetSelect.options).some(opt => opt.value === winnerName)) {
+                            const newOption = document.createElement('option');
+                            newOption.value = winnerName;
+                            newOption.textContent = winnerName;
+                            targetSelect.appendChild(newOption);
+                        }
+                        targetSelect.value = winnerName;
+                        console.log(`Advanced ${winnerName} from ${currentMatchId} to ${nextMatchId} slot ${targetPlayerSlot}`);
+                        // Trigger change event to ensure UI updates and data is saved
+                        targetSelect.dispatchEvent(new Event('change'));
+                    }
+                }
+            }
+        }
+
+        // Fungsi untuk memproses semua pemenang di bracket
+        function processBracketWinners() {
+            ['singles', 'doubles', 'mix-doubles'].forEach(bracketType => {
+                const bracketElement = document.getElementById(`${bracketType}-bracket`);
+                if (!bracketElement) return;
+
+                // Urutan pemrosesan penting: R16 -> QF -> SF -> 3rd Place -> Final
+                const roundsInOrder = ['r16', 'qf', 'sf', '3rd-place', 'final'];
+
+                roundsInOrder.forEach(roundPrefix => {
+                    bracketElement.querySelectorAll(`.match[data-match-id^="${bracketType}-${roundPrefix}"]`).forEach(match => {
+                        const matchId = match.getAttribute('data-match-id');
+                        const matchData = JSON.parse(match.dataset.matchData || '{}');
+                        const matchWinner = matchData.matchWinner;
+
+                        if (matchWinner) {
+                            advanceWinner(matchWinner, matchId);
+                        }
+                    });
+                });
+            });
+        }
+
+
+        function updateWinner(event) {
+            const match = event.target.closest('.match');
+            if (!match) return;
+
+            const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+            const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+            const player1Div = match.querySelector('.player[data-player="1"]');
+            const player2Div = match.querySelector('.player[data-player="2"]');
+
+            if (!player1Select || !player2Select) {
+                return;
+            }
+
+            const p1ScoreInputs = Array.from(match.querySelectorAll('.player[data-player="1"] .score-input'));
+            const p2ScoreInputs = Array.from(match.querySelectorAll('.player[data-player="2"] .score-input'));
+
+            let p1SetWins = 0;
+            let p2SetWins = 0;
+            const setWinners = [];
+            let matchCompleted = false;
+            let matchWinner = null;
+
+            for (let i = 0; i < Math.min(p1ScoreInputs.length, p2ScoreInputs.length); i++) {
+                const p1s = parseInt(p1ScoreInputs[i].value);
+                const p2s = parseInt(p2ScoreInputs[i].value);
+
+                if (p1s >= 21 && (p1s - p2s >= 2 || p1s === 30)) {
+                    p1SetWins++;
+                    setWinners[i] = 'player1';
+                } else if (p2s >= 21 && (p2s - p1s >= 2 || p2s === 30)) {
+                    p2SetWins++;
+                    setWinners[i] = 'player2';
+                } else {
+                    setWinners[i] = null;
+                }
+            }
+
+            player1Div.classList.remove('winner');
+            player2Div.classList.remove('winner');
+
+            if (p1SetWins >= 2) { // Best of 3 sets, so 2 wins means match won
+                player1Div.classList.add('winner');
+                matchWinner = player1Select.value;
+                matchCompleted = true;
+            } else if (p2SetWins >= 2) { // Best of 3 sets, so 2 wins means match won
+                player2Div.classList.add('winner');
+                matchWinner = player2Select.value;
+                matchCompleted = true;
+            }
+
+            match.dataset.matchData = JSON.stringify({
+                setWinners: setWinners,
+                matchWinner: matchWinner // Simpan pemenang pertandingan
+            });
+
+            if (liveMatchId === match.getAttribute('data-match-id')) {
+                let activeSetFound = false;
+                for (let i = 0; i < p1ScoreInputs.length; i++) {
+                    if (parseInt(p1ScoreInputs[i].value) !== 0 || parseInt(p2ScoreInputs[i].value) !== 0) {
+                        currentSet = i + 1;
+                        activeSetFound = true;
+                        break;
+                    }
+                }
+                if (!activeSetFound) {
+                    currentSet = 1;
+                }
+
+                updateLiveScoreboard(match);
+                if (matchCompleted) {
+                    document.getElementById('match-status').textContent = 'Match Completed';
+                } else {
+                    document.getElementById('match-status').textContent = 'Playing';
+                }
+            }
+
+            // Jika pertandingan selesai, panggil advanceWinner
+            if (matchCompleted && matchWinner) {
+                advanceWinner(matchWinner, match.getAttribute('data-match-id'));
+            }
+
+            saveData();
+        }
+
+        window.onload = initTournament;
+    </script>
+</body>
+</html>
