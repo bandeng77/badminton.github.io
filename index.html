@@ -19,7 +19,8 @@
             background-repeat: no-repeat; /* Jangan ulangi gambar */
             background-attachment: fixed; /* Agar gambar tetap saat scroll */
             font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
+            /* overflow-x: hidden; */ /* Dihapus untuk memungkinkan scroll horizontal */
+            overflow-x: auto; /* Memungkinkan scroll horizontal jika konten melebihi lebar */
             position: relative;
             min-height: 100vh;
             /* Tambahkan overlay untuk kontras teks */
@@ -247,11 +248,11 @@
         .bracket {
             display: flex;
             justify-content: center;
-            padding: 2rem;
+            padding: 2rem 1rem; /* Menambahkan padding horizontal untuk ruang lebih */
             align-items: center;
             position: relative;
             z-index: 1;
-            gap: 0.5rem; /* Mengurangi jarak antar round lebih lanjut */
+            gap: 0.25rem; /* Mengurangi jarak antar round lebih lanjut */
             max-width: 100%; /* Pastikan bracket tidak melebihi lebar viewport */
             box-sizing: border-box;
         }
@@ -260,26 +261,26 @@
             display: flex;
             flex-direction: column;
             justify-content: space-around;
-            margin: 0 0.25rem; /* Mengurangi margin horizontal lebih lanjut */
-            min-height: 500px;
+            margin: 0 0.15rem; /* Mengurangi margin horizontal lebih lanjut */
+            min-height: 450px; /* Sedikit mengurangi tinggi minimum */
             background: rgba(255, 255, 255, 0.1); /* Latar belakang transparan untuk round */
             border-radius: 15px;
-            padding: 1rem;
+            padding: 0.8rem; /* Sedikit mengurangi padding */
             box-shadow: inset 0 0 10px rgba(255,255,255,0.5); /* Efek kaca */
             flex-grow: 1; /* Memungkinkan round untuk tumbuh mengisi ruang */
             flex-basis: 0; /* Penting untuk flex-grow agar bekerja dengan baik */
-            min-width: 200px; /* Lebar minimum untuk round */
-            max-width: 280px; /* Lebar maksimum untuk round */
+            min-width: 180px; /* Lebar minimum untuk round */
+            max-width: 20vw; /* Menggunakan unit viewport width untuk responsivitas */
         }
 
         .match {
             background: rgba(255, 255, 255, 0.95); /* Sedikit transparan */
             border-radius: 12px; /* Sudut lebih membulat */
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Bayangan lebih kuat */
-            margin: 1rem 0;
-            padding: 1.2rem; /* Padding lebih besar */
+            margin: 0.8rem 0; /* Sedikit mengurangi margin */
+            padding: 1rem; /* Sedikit mengurangi padding */
             width: 100%; /* Match mengisi lebar round */
-            max-width: 280px; /* Batasi lebar maksimum match */
+            max-width: 100%; /* Biarkan match mengisi lebar round */
             transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); /* Transisi lebih halus */
             position: relative;
             border: 2px solid #FFD700; /* Border emas */
@@ -313,7 +314,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0.8rem 0.6rem; /* Padding lebih besar */
+            padding: 0.6rem 0.5rem; /* Sedikit mengurangi padding */
             flex-wrap: wrap;
             border-bottom: 1px solid #e2e8f0;
             font-weight: 500;
@@ -337,13 +338,13 @@
 
         .player-name-select {
             flex-grow: 1;
-            margin-right: 0.75rem; /* Margin lebih besar */
-            padding: 0.3rem 0.6rem; /* Padding lebih besar */
+            margin-right: 0.5rem; /* Sedikit mengurangi margin */
+            padding: 0.25rem 0.5rem; /* Sedikit mengurangi padding */
             border: 1px solid #ccc; /* Border lebih jelas */
             border-radius: 6px; /* Lebih membulat */
             background-color: #fefefe;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.85rem; /* Ukuran font sedikit lebih besar */
+            font-size: 0.8rem; /* Ukuran font sedikit lebih kecil */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -354,7 +355,7 @@
 
         .score-container {
             display: flex;
-            gap: 0.2rem; /* Jarak antar skor */
+            gap: 0.15rem; /* Sedikit mengurangi jarak antar skor */
             align-items: center;
             flex-shrink: 0;
         }
@@ -366,14 +367,14 @@
         }
 
         .score-input {
-            width: 42px; /* Lebih lebar */
-            height: 32px; /* Lebih tinggi */
+            width: 38px; /* Sedikit mengurangi lebar */
+            height: 28px; /* Sedikit mengurangi tinggi */
             text-align: center;
             border: 1px solid #bbb;
             border-radius: 6px;
             padding: 0 4px;
             box-sizing: border-box;
-            font-size: 1rem; /* Ukuran font lebih besar */
+            font-size: 0.9rem; /* Sedikit mengurangi ukuran font */
             font-weight: 600;
             -moz-appearance: textfield;
             transition: all 0.2s ease;
@@ -393,12 +394,12 @@
         .score-controls {
             display: flex;
             flex-direction: column;
-            margin-left: 5px;
+            margin-left: 4px; /* Sedikit mengurangi margin */
         }
 
         .score-up, .score-down {
-            width: 18px;
-            height: 16px;
+            width: 16px; /* Sedikit mengurangi lebar */
+            height: 14px; /* Sedikit mengurangi tinggi */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -414,15 +415,15 @@
         }
 
         .score-up svg, .score-down svg {
-            width: 10px;
-            height: 10px;
+            width: 9px; /* Sedikit mengurangi ukuran SVG */
+            height: 9px; /* Sedikit mengurangi ukuran SVG */
             fill: #333;
         }
 
         /* Connector styles for bracket lines */
         .qf-sf-connector, .sf-final-connector, .r16-qf-connector {
             position: relative;
-            width: 60px; /* Lebar konektor */
+            width: 40px; /* Mengurangi lebar konektor */
             display: flex;
             flex-direction: column;
             justify-content: space-around;
@@ -451,32 +452,26 @@
         /* Penyesuaian posisi garis agar sesuai dengan ukuran match yang lebih besar */
         /* Menggunakan calc() dengan variabel CSS atau nilai yang lebih adaptif */
         .qf-sf-connector .v-line-top, .r16-qf-connector .v-line-top {
-            top: calc(1rem + 1px); /* Padding match + border */
-            height: calc(50% - 1rem - 1px + 1.2rem); /* Setengah tinggi round - padding - border + match padding */
+            top: calc(var(--match-padding-top) + var(--match-border-width)); /* Padding match + border */
+            height: calc(50% - var(--match-padding-top) - var(--match-border-width) + var(--match-height-adjusted) / 2); /* Setengah tinggi round - padding - border + match padding */
         }
 
         .qf-sf-connector .v-line-bottom, .r16-qf-connector .v-line-bottom {
-            bottom: calc(1rem + 1px); /* Padding match + border */
-            height: calc(50% - 1rem - 1px + 1.2rem); /* Setengah tinggi round - padding - border + match padding */
+            bottom: calc(var(--match-padding-bottom) + var(--match-border-width)); /* Padding match + border */
+            height: calc(50% - var(--match-padding-bottom) - var(--match-border-width) + var(--match-height-adjusted) / 2); /* Setengah tinggi round - padding - border + match padding */
         }
 
         .sf-final-connector .v-line {
-            height: calc(100% - 2rem - 2px); /* Tinggi round - 2*padding - 2*border */
+            height: calc(100% - 2 * var(--round-padding-vertical) - 2 * var(--round-border-width)); /* Tinggi round - 2*padding - 2*border */
         }
 
         /* Specific adjustments for mix-doubles R16 to QF connector */
-        /* Ini perlu disesuaikan jika tinggi match berubah */
         #mix-doubles-bracket .r16-qf-connector .h-line.top-match {
-            /* Posisi vertikal untuk match pertama di QF */
-            top: calc(1rem + 1px + 50% - 1px);
+            top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);
         }
 
         #mix-doubles-bracket .r16-qf-connector .h-line.bottom-match {
-            /* Posisi vertikal untuk match kedua di QF */
-            /* Ini adalah perkiraan, mungkin perlu disesuaikan secara manual jika layout sangat dinamis */
-            top: calc(1rem + 1px + 50% + 1px + 2 * (1.2rem + 1rem + 1rem)); /* match padding + match margin-top + match margin-bottom */
-            /* Perhitungan yang lebih akurat: tinggi match + 2*margin match + 2*padding match */
-            /* top: calc(1rem + 1px + 50% + 1px + 2 * (150px)); */
+            top: calc(var(--round-padding-top) + 2 * (var(--match-margin-top) + var(--match-height-adjusted) + var(--match-margin-bottom)) + var(--match-margin-top) + var(--match-height-adjusted) / 2);
         }
 
         .live-indicator {
@@ -566,13 +561,13 @@
 
         .live-scoreboard {
             position: fixed;
-            bottom: 30px; /* Lebih tinggi */
-            right: 30px; /* Lebih ke dalam */
+            bottom: 20px; /* Sedikit lebih tinggi */
+            right: 20px; /* Sedikit lebih ke dalam */
             background: rgba(255, 255, 255, 0.98); /* Hampir solid */
             box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Bayangan lebih kuat */
             border-radius: 15px; /* Lebih membulat */
-            padding: 1.5rem; /* Padding lebih besar */
-            max-width: 350px; /* Lebih lebar */
+            padding: 1.2rem; /* Sedikit mengurangi padding */
+            max-width: 320px; /* Sedikit mengurangi lebar */
             z-index: 100;
             border: 2px solid #FFD700; /* Border emas */
             animation: slide-in 0.5s ease-out forwards; /* Animasi slide-in */
@@ -587,20 +582,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem; /* Margin lebih besar */
-            padding-bottom: 0.5rem;
+            margin-bottom: 0.8rem; /* Sedikit mengurangi margin */
+            padding-bottom: 0.4rem; /* Sedikit mengurangi padding */
             border-bottom: 1px solid #eee;
         }
 
         .live-scoreboard-header h3 {
             color: #8B0000; /* Merah gelap */
             font-weight: 700;
-            font-size: 1.2rem;
+            font-size: 1.1rem; /* Sedikit mengurangi ukuran font */
         }
 
         .live-scoreboard .player {
-            padding: 0.5rem 0;
-            font-size: 1.1rem;
+            padding: 0.4rem 0; /* Sedikit mengurangi padding */
+            font-size: 1rem; /* Sedikit mengurangi ukuran font */
             font-weight: 600;
         }
 
@@ -612,11 +607,11 @@
         /* Gaya untuk tombol login/logout dan status admin */
         .auth-controls {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 15px; /* Sedikit lebih dekat ke atas */
+            right: 15px; /* Sedikit lebih dekat ke kanan */
             z-index: 1000;
             display: flex;
-            gap: 10px;
+            gap: 8px; /* Sedikit mengurangi gap */
             align-items: center;
             flex-wrap: wrap; /* Tambahkan ini untuk responsivitas */
             justify-content: flex-end; /* Tambahkan ini untuk responsivitas */
@@ -624,7 +619,7 @@
         .auth-controls button {
             background-color: #8B0000;
             color: white;
-            padding: 8px 15px;
+            padding: 7px 12px; /* Sedikit mengurangi padding */
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
@@ -637,16 +632,16 @@
         .auth-controls input {
             background-color: rgba(255, 255, 255, 0.9);
             border: 1px solid #ccc;
-            padding: 8px 12px;
+            padding: 7px 10px; /* Sedikit mengurangi padding */
             border-radius: 8px;
-            font-size: 0.9rem;
+            font-size: 0.85rem; /* Sedikit mengurangi ukuran font */
             color: #333;
         }
         .admin-status {
             font-weight: 600;
             color: #8B0000;
             background-color: rgba(255, 255, 255, 0.8);
-            padding: 5px 10px;
+            padding: 4px 8px; /* Sedikit mengurangi padding */
             border-radius: 5px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             white-space: nowrap;
@@ -1203,10 +1198,10 @@
 
         <!-- Connector Quarter Finals to Semi Finals -->
         <div class="qf-sf-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + 2 * (var(--match-margin-top) + var(--match-height-adjusted) + var(--match-margin-bottom)) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line v-line-top" style="top: calc(var(--round-padding-top) + var(--match-margin-top));"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(var(--round-padding-bottom) + var(--match-margin-bottom));"></div>
         </div>
 
         <!-- Semi Finals -->
@@ -1373,8 +1368,8 @@
 
         <!-- Connector Semi Finals to Final -->
         <div class="sf-final-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top)); height: calc(var(--round-height) - 2 * var(--round-padding-top) - 2 * var(--match-margin-top));"></div>
         </div>
 
         <!-- NEW: 3rd Place Match for Singles -->
@@ -1462,8 +1457,8 @@
 
         <!-- Connector 3rd Place to Final (Optional, but good for visual flow) -->
         <div class="sf-final-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top)); height: calc(var(--round-height) - 2 * var(--round-padding-top) - 2 * var(--match-margin-top));"></div>
         </div>
 
         <!-- Final -->
@@ -1873,10 +1868,10 @@
 
         <!-- Connector Quarter Finals to Semi Finals -->
         <div class="qf-sf-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + 2 * (var(--match-margin-top) + var(--match-height-adjusted) + var(--match-margin-bottom)) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line v-line-top" style="top: calc(var(--round-padding-top) + var(--match-margin-top));"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(var(--round-padding-bottom) + var(--match-margin-bottom));"></div>
         </div>
 
         <!-- Semi Finals -->
@@ -2043,8 +2038,8 @@
 
         <!-- Connector Semi Finals to Final -->
         <div class="sf-final-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top)); height: calc(var(--round-height) - 2 * var(--round-padding-top) - 2 * var(--match-margin-top));"></div>
         </div>
 
         <!-- NEW: 3rd Place Match for Doubles -->
@@ -2132,8 +2127,8 @@
 
         <!-- Connector 3rd Place to Final (Optional, but good for visual flow) -->
         <div class="sf-final-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top)); height: calc(var(--round-height) - 2 * var(--round-padding-top) - 2 * var(--match-margin-top));"></div>
         </div>
 
         <!-- Final -->
@@ -2233,10 +2228,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2244,10 +2239,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2255,10 +2250,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2271,10 +2266,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2282,10 +2277,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2293,10 +2288,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2312,10 +2307,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2323,10 +2318,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2334,10 +2329,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2350,10 +2345,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2361,10 +2356,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2372,10 +2367,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2391,10 +2386,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2402,10 +2397,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2413,10 +2408,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2429,10 +2424,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2440,10 +2435,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2451,10 +2446,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2462,19 +2457,19 @@
                 </div>
             </div>
             <!-- Placeholder for Bye 1 -->
-            <div class="match" data-match-id="mix-doubles-r16-bye1" style="visibility: hidden; margin: 1rem 0;"></div>
+            <div class="match" data-match-id="mix-doubles-r16-bye1" style="visibility: hidden; margin: 0.8rem 0;"></div>
             <!-- Placeholder for Bye 2 -->
-            <div class="match" data-match-id="mix-doubles-r16-bye2" style="visibility: hidden; margin: 1rem 0;"></div>
+            <div class="match" data-match-id="mix-doubles-r16-bye2" style="visibility: hidden; margin: 0.8rem 0;"></div>
         </div>
 
         <!-- Connector Round of 16 to Quarter Finals -->
         <div class="r16-qf-connector">
             <!-- Horizontal lines connecting to QF matches -->
-            <div class="h-line top-match" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line bottom-match" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
+            <div class="h-line top-match"></div>
+            <div class="h-line bottom-match"></div>
             <!-- Vertical lines connecting to R16 matches -->
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+            <div class="v-line v-line-top" style="top: calc(var(--round-padding-top) + var(--match-margin-top));"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(var(--round-padding-bottom) + var(--match-margin-bottom));"></div>
         </div>
 
         <!-- Quarter Finals -->
@@ -2488,10 +2483,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2499,10 +2494,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2510,10 +2505,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2526,10 +2521,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2537,10 +2532,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2548,10 +2543,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2567,10 +2562,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2578,10 +2573,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2589,10 +2584,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2605,10 +2600,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2616,10 +2611,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2627,10 +2622,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2646,10 +2641,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2657,10 +2652,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2668,10 +2663,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2684,10 +2679,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2695,10 +2690,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2706,10 +2701,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2725,10 +2720,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2736,10 +2731,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2747,10 +2742,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2763,10 +2758,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2774,10 +2769,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2799,10 +2794,10 @@
 
         <!-- Connector Quarter Finals to Semi Finals -->
         <div class="qf-sf-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="h-line" style="top: calc(1rem + 1px + 50% + 1px + 2 * (var(--match-height) + 2rem));"></div>
-            <div class="v-line v-line-top" style="top: calc(1rem + 1px);"></div>
-            <div class="v-line v-line-bottom" style="bottom: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + 2 * (var(--match-margin-top) + var(--match-height-adjusted) + var(--match-margin-bottom)) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line v-line-top" style="top: calc(var(--round-padding-top) + var(--match-margin-top));"></div>
+            <div class="v-line v-line-bottom" style="bottom: calc(var(--round-padding-bottom) + var(--match-margin-bottom));"></div>
         </div>
 
         <!-- Semi Finals -->
@@ -2816,10 +2811,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2827,10 +2822,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2838,10 +2833,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2854,10 +2849,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2865,10 +2860,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2876,10 +2871,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2895,10 +2890,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2906,10 +2901,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2917,10 +2912,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2933,10 +2928,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2944,10 +2939,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2955,10 +2950,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2969,8 +2964,8 @@
 
         <!-- Connector Semi Finals to 3rd Place -->
         <div class="sf-final-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top)); height: calc(var(--round-height) - 2 * var(--round-padding-top) - 2 * var(--match-margin-top));"></div>
         </div>
 
         <!-- NEW: 3rd Place Match -->
@@ -2984,10 +2979,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -2995,10 +2990,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3006,10 +3001,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3022,10 +3017,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3033,10 +3028,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3044,10 +3039,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3058,8 +3053,8 @@
 
         <!-- Connector 3rd Place to Final (Optional, but good for visual flow) -->
         <div class="sf-final-connector">
-            <div class="h-line" style="top: calc(1rem + 1px + 50% - 1px);"></div>
-            <div class="v-line" style="top: calc(1rem + 1px);"></div>
+            <div class="h-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top) + var(--match-height-adjusted) / 2);"></div>
+            <div class="v-line" style="top: calc(var(--round-padding-top) + var(--match-margin-top)); height: calc(var(--round-height) - 2 * var(--round-padding-top) - 2 * var(--match-margin-top));"></div>
         </div>
 
         <!-- Final -->
@@ -3073,10 +3068,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 164"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3084,10 +3079,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3095,10 +3090,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3111,10 +3106,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3122,10 +3117,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3133,10 +3128,10 @@
                             <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
                             <div class="score-controls">
                                 <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 14l5-5 5 5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
                                 </div>
                                 <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 16 16"><path d="M7 10l5 5 5-5z"/></svg>
+                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
                                 </div>
                             </div>
                         </div>
@@ -3580,20 +3575,51 @@
             }
             console.log("Tournament initialization complete.");
 
-            setMatchHeightCssVariable();
-            window.addEventListener('resize', setMatchHeightCssVariable);
+            setMatchHeightCssVariables(); // Panggil fungsi yang diperbarui
+            window.addEventListener('resize', setMatchHeightCssVariables);
 
             createParticles(80); // Lebih banyak partikel
             setInterval(createFirework, 3000); // Kembang api lebih sering
         }
 
-        // Function to dynamically set CSS variable for match height
-        function setMatchHeightCssVariable() {
+        // Function to dynamically set CSS variables for match and round dimensions
+        function setMatchHeightCssVariables() {
             const sampleMatch = document.querySelector('.match');
-            if (sampleMatch) {
+            const sampleRound = document.querySelector('.round');
+
+            if (sampleMatch && sampleRound) {
+                const matchStyle = getComputedStyle(sampleMatch);
+                const roundStyle = getComputedStyle(sampleRound);
+
                 const matchHeight = sampleMatch.offsetHeight;
+                const matchPaddingTop = parseFloat(matchStyle.paddingTop);
+                const matchPaddingBottom = parseFloat(matchStyle.paddingBottom);
+                const matchBorderWidth = parseFloat(matchStyle.borderTopWidth); // Assuming all borders are same
+                const matchMarginTop = parseFloat(matchStyle.marginTop);
+                const matchMarginBottom = parseFloat(matchStyle.marginBottom);
+
+                const roundHeight = sampleRound.offsetHeight;
+                const roundPaddingTop = parseFloat(roundStyle.paddingTop);
+                const roundPaddingBottom = parseFloat(roundStyle.paddingBottom);
+                const roundBorderWidth = parseFloat(roundStyle.borderTopWidth); // Assuming all borders are same
+
+                // Calculate adjusted match height (content + padding + border)
+                const matchHeightAdjusted = matchHeight - matchPaddingTop - matchPaddingBottom - (2 * matchBorderWidth);
+
                 document.documentElement.style.setProperty('--match-height', `${matchHeight}px`);
-                console.log("Match height CSS variable set to:", matchHeight);
+                document.documentElement.style.setProperty('--match-height-adjusted', `${matchHeightAdjusted}px`);
+                document.documentElement.style.setProperty('--match-padding-top', `${matchPaddingTop}px`);
+                document.documentElement.style.setProperty('--match-padding-bottom', `${matchPaddingBottom}px`);
+                document.documentElement.style.setProperty('--match-border-width', `${matchBorderWidth}px`);
+                document.documentElement.style.setProperty('--match-margin-top', `${matchMarginTop}px`);
+                document.documentElement.style.setProperty('--match-margin-bottom', `${matchMarginBottom}px`);
+
+                document.documentElement.style.setProperty('--round-height', `${roundHeight}px`);
+                document.documentElement.style.setProperty('--round-padding-top', `${roundPaddingTop}px`);
+                document.documentElement.style.setProperty('--round-padding-bottom', `${roundPaddingBottom}px`);
+                document.documentElement.style.setProperty('--round-border-width', `${roundBorderWidth}px`);
+
+                console.log("CSS variables for dimensions set.");
             }
         }
 
