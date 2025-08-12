@@ -344,7 +344,7 @@
             border-radius: 6px; /* Lebih membulat */
             background-color: #fefefe;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.65rem; /* Ukuran font sedikit lebih besar */
+            font-size: 0.85rem; /* Ukuran font sedikit lebih besar */
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -2861,31 +2861,31 @@
 
         // Daftar pemain yang tersedia
         const allPlayers = [
-            "BINTANG NORYS", "NURHIDAYAT", "HUSNI", "QOSIM", "EDWIN", "ANDI SUROSO", "ACHMAD FADIL", "RAKA"
+            "BINTANG", "DAYAT", "HUSNI", "QOSIM", "EDWIN", "ANDI S", "FADIL", "RAKA"
         ];
 
         // Initial player assignments for each bracket type
         const initialPlayerAssignments = {
             'singles': {
-                'qf1': ['BINTANG NORYS', 'NURHIDAYAT'],
+                'qf1': ['BINTANG', 'DAYAT'],
                 'qf2': ['HUSNI', 'QOSIM'],
-                'qf3': ['EDWIN', 'ANDI SUROSO'],
-                'qf4': ['ACHMAD FADIL', 'RAKA']
+                'qf3': ['EDWIN', 'ANDI S'],
+                'qf4': ['FADIL', 'RAKA']
             },
             'doubles': {
-                'qf1': ['RAKA & ACHMAD FADIL ', 'PUTRA & HARYO'],
-                'qf2': ['EDWIN & WAHYU YIB', 'RANGGA & ANDI SUROSO'],
-                'qf3': ['ANDY RAHMAN & GALIH', 'BRIAN & NURHIDAYAT'],
-                'qf4': ['QOSIM & WAHYU ARDIANSYAH', 'HUSNI & BINTANG NORYS']
+                'qf1': ['RAKA & FADIL ', 'PUTRA & HARYO'],
+                'qf2': ['EDWIN & WAHYU YIB', 'RANGGA & ANDI S'],
+                'qf3': ['ANDY R & GALIH', 'BRIAN & DAYAT'],
+                'qf4': ['QOSIM & WAHYU A', 'HUSNI & BINTANG']
             },
             'mix-doubles': {
-                'r16-1': ['ANDI SUROSO & MAIDA', 'WAHYU ARDIANSYAH & ANISA'],
-                'r16-2': ['ACHMAD FADIL & ANGGI', 'BINTANG NORYS & WINDA'],
-                'r16-3': ['RENI & PUTRA', 'NURHIDAYAT & TANIA'],
+                'r16-1': ['ANDI S & MAIDA', 'WAHYU A & ANISA'],
+                'r16-2': ['FADIL & ANGGI', 'BINTANG & WINDA'],
+                'r16-3': ['RENI & PUTRA', 'DAYAT & TANIA'],
                 'all-mix-players': [
-                    'ANDI SUROSO & MAIDA', 'WAHYU ARDIANSYAH & ANISA',
-                    'ACHMAD FADIL & ANGGI', 'BINTANG NORYS & WINDA',
-                    'RENI & PUTRA', 'NURHIDAYAT & TANIA',
+                    'ANDI S & MAIDA', 'WAHYU A & ANISA',
+                    'FADIL & ANGGI', 'BINTANG & WINDA',
+                    'RENI & PUTRA', 'DAYAT & TANIA',
                     'HUSNI & TUTI', 'GALIH & MARIA', 'ANDY SUROSO & ROSSIANA', 'EDWIN & ARIFA', 'RAKA & KARTIKA'
                 ]
             }
@@ -3287,10 +3287,10 @@
                         playersToPopulate = allPlayers;
                     } else if (bracketType === 'doubles') {
                         playersToPopulate = [
-                            'RAKA & ACHMAD FADIL ', 'PUTRA & HARYO',
-                            'EDWIN & WAHYU YIB', 'RANGGA & ANDI SUROSO',
-                            'ANDY RAHMAN & GALIH', 'BRIAN & NURHIDAYAT',
-                            'QOSIM & WAHYU ARDIANSYAH', 'HUSNI & BINTANG NORYS'
+                            'RAKA & FADIL ', 'PUTRA & HARYO',
+                            'EDWIN & WAHYU YIB', 'RANGGA & ANDI S',
+                            'ANDY R & GALIH', 'BRIAN & DAYAT',
+                            'QOSIM & WAHYU A', 'HUSNI & BINTANG'
                         ];
                     } else if (bracketType === 'mix-doubles') {
                         playersToPopulate = initialPlayerAssignments['mix-doubles']['all-mix-players'];
