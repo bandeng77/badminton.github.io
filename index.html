@@ -2893,6 +2893,7 @@
         // --- Variabel dan Fungsi Baru untuk Admin ---
         let isAdmin = false;
         const adminUidsRef = db.collection('config').doc('adminUids'); // Dokumen untuk menyimpan UID admin
+        let unsubscribeLiveMatchListener = null; // Variabel global untuk menyimpan unsubscribe function dari listener Firestore
 
         // Fungsi untuk mengaktifkan/menonaktifkan input
         function setInputsDisabled(disabled) {
@@ -3038,6 +3039,13 @@
 
             try {
                 await db.collection('tournamentData').doc('currentBracket').set(allBracketData);
+
+                // Simpan juga liveMatchId saat ini
+                await db.collection('config').doc('liveMatch').set({
+                    liveMatchId: liveMatchId, // liveMatchId adalah variabel global yang sudah ada
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp() // Opsional: untuk melacak kapan diupdate
+                });
+
                 console.log("Data successfully written to Firestore!");
             }
             catch (error) {
@@ -3053,91 +3061,7 @@
                 if (doc.exists) {
                     const allBracketData = doc.data();
                     console.log("Data successfully loaded from Firestore:", allBracketData);
-                    for (const bracketId in allBracketData) {
-                        const bracketElement = document.getElementById(bracketId);
-                        if (bracketElement) {
-                            const matchesData = allBracketData[bracketId];
-                            for (const matchId in matchesData) {
-                                const match = bracketElement.querySelector(`.match[data-match-id="${matchId}"]`);
-                                if (match) {
-                                    const data = matchesData[matchId];
-
-                                    // Skip if this is a placeholder match
-                                    if (data.isPlaceholder) {
-                                        continue;
-                                    }
-
-                                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
-                                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
-                                    const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
-                                    const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
-                                    const player1Div = match.querySelector('.player[data-player="1"]');
-                                    const player2Div = match.querySelector('.player[data-player="2"]');
-
-                                    // Store set winner info in dataset for updateLiveScoreboard
-                                    match.dataset.matchData = JSON.stringify({ setWinners: data.setWinners || [] });
-
-                                    // Ensure player selects exist before trying to set values
-                                    if (player1Select) {
-                                        let optionExists = false;
-                                        for (let i = 0; i < player1Select.options.length; i++) {
-                                            if (player1Select.options[i].value === data.player1) {
-                                                optionExists = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!optionExists && data.player1) {
-                                            const newOption = document.createElement('option');
-                                            newOption.value = data.player1;
-                                            newOption.textContent = data.player1;
-                                            player1Select.appendChild(newOption);
-                                        }
-                                        player1Select.value = data.player1;
-                                    }
-                                    if (player2Select) {
-                                        let optionExists = false;
-                                        for (let i = 0; i < player2Select.options.length; i++) {
-                                            if (player2Select.options[i].value === data.player2) {
-                                                optionExists = true;
-                                                break;
-                                            }
-                                        }
-                                        if (!optionExists && data.player2) {
-                                            const newOption = document.createElement('option');
-                                            newOption.value = data.player2;
-                                            newOption.textContent = data.player2;
-                                            player2Select.appendChild(newOption);
-                                        }
-                                        player2Select.value = data.player2;
-                                    }
-
-                                    p1ScoreInputs.forEach((input, i) => {
-                                        if (data.scores1 && data.scores1[i] !== undefined) {
-                                            input.value = data.scores1[i];
-                                        }
-                                    });
-                                    p2ScoreInputs.forEach((input, i) => {
-                                        if (data.scores2 && data.scores2[i] !== undefined) {
-                                            input.value = data.scores2[i];
-                                        }
-                                    });
-
-                                    // Hanya nama pemain yang memenangkan pertandingan yang akan berwarna biru (melalui class 'winner')
-                                    if (player1Div && data.isWinner1) {
-                                        player1Div.classList.add('winner');
-                                    } else if (player1Div) {
-                                        player1Div.classList.remove('winner');
-                                    }
-                                    if (player2Div && data.isWinner2) {
-                                        player2Div.classList.add('winner');
-                                    } else if (player2Div) {
-                                        player2Div.classList.remove('winner');
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    console.log("Data loading and UI update complete.");
+                    updateUIFromFirestoreSnapshot(allBracketData); // Panggil fungsi untuk update UI
                 } else {
                     console.log("No 'currentBracket' document found in 'tournamentData' collection. Saving initial data.");
                     await saveData(); // Save initial data if document doesn't exist
@@ -3146,6 +3070,81 @@
                 console.error("Error getting document from Firestore: ", error);
             }
         }
+
+        // Fungsi untuk memperbarui UI dari snapshot Firestore
+        function updateUIFromFirestoreSnapshot(allBracketData) {
+            for (const bracketId in allBracketData) {
+                const bracketElement = document.getElementById(bracketId);
+                if (!bracketElement) continue;
+
+                const matchesData = allBracketData[bracketId];
+                for (const matchId in matchesData) {
+                    const match = bracketElement.querySelector(`.match[data-match-id="${matchId}"]`);
+                    if (!match || matchesData[matchId].isPlaceholder) continue;
+
+                    const data = matchesData[matchId];
+                    const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
+                    const player2Select = match.querySelector('.player[data-player="2"] .player-name-select');
+                    const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
+                    const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
+                    const player1Div = match.querySelector('.player[data-player="1"]');
+                    const player2Div = match.querySelector('.player[data-player="2"]');
+
+                    // Update dropdown values (hanya jika berbeda untuk menghindari reset fokus admin)
+                    if (player1Select && player1Select.value !== data.player1) {
+                        // Tambahkan opsi jika belum ada
+                        if (data.player1 && !Array.from(player1Select.options).some(opt => opt.value === data.player1)) {
+                            const newOption = document.createElement('option');
+                            newOption.value = data.player1;
+                            newOption.textContent = data.player1;
+                            player1Select.appendChild(newOption);
+                        }
+                        player1Select.value = data.player1;
+                    }
+                    if (player2Select && player2Select.value !== data.player2) {
+                        // Tambahkan opsi jika belum ada
+                        if (data.player2 && !Array.from(player2Select.options).some(opt => opt.value === data.player2)) {
+                            const newOption = document.createElement('option');
+                            newOption.value = data.player2;
+                            newOption.textContent = data.player2;
+                            player2Select.appendChild(newOption);
+                        }
+                        player2Select.value = data.player2;
+                    }
+
+                    // Update scores
+                    p1ScoreInputs.forEach((input, i) => {
+                        if (data.scores1 && data.scores1[i] !== undefined && parseInt(input.value) !== data.scores1[i]) {
+                            input.value = data.scores1[i];
+                        }
+                    });
+                    p2ScoreInputs.forEach((input, i) => {
+                        if (data.scores2 && data.scores2[i] !== undefined && parseInt(input.value) !== data.scores2[i]) {
+                            input.value = data.scores2[i];
+                        }
+                    });
+
+                    // Update winner class
+                    if (player1Div) {
+                        if (data.isWinner1) player1Div.classList.add('winner');
+                        else player1Div.classList.remove('winner');
+                    }
+                    if (player2Div) {
+                        if (data.isWinner2) player2Div.classList.add('winner');
+                        else player2Div.classList.remove('winner');
+                    }
+
+                    // Update dataset for setWinners
+                    match.dataset.matchData = JSON.stringify({ setWinners: data.setWinners || [] });
+
+                    // Jika pertandingan ini adalah pertandingan live saat ini, perbarui scoreboard live
+                    if (matchId === liveMatchId) {
+                        updateLiveScoreboard(match);
+                    }
+                }
+            }
+        }
+
 
         // Modifikasi initTournament untuk memanggil setInputsDisabled di awal
         async function initTournament() {
@@ -3192,8 +3191,22 @@
             });
 
             populateAllPlayerDropdowns();
-            await loadData();
-            console.log("Data loaded. Checking current tab...");
+            await loadData(); // Pastikan data bracket dimuat terlebih dahulu
+
+            // Tambahkan listener untuk liveMatchId
+            setupLiveMatchListener();
+
+            // Tambahkan listener untuk perubahan data bracket secara realtime
+            db.collection('tournamentData').doc('currentBracket')
+                .onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const allBracketData = doc.data();
+                        updateUIFromFirestoreSnapshot(allBracketData);
+                    }
+                }, (error) => {
+                    console.error("Error listening to currentBracket document:", error);
+                });
+
 
             const savedTab = localStorage.getItem('currentTab');
             if (savedTab) {
@@ -3339,6 +3352,15 @@
         }
 
         function changeTab(tab) {
+            // Hentikan live score saat mengganti tab
+            if (liveMatchId) {
+                liveMatchId = null; // Set liveMatchId ke null
+                if (isAdmin) { // Hanya admin yang boleh menyimpan perubahan ini ke Firestore
+                    saveData();
+                }
+            }
+            closeLiveScore(); // Tutup scoreboard secara visual
+
             currentTab = tab;
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelector(`.tab[onclick="changeTab('${tab}')"]`).classList.add('active');
@@ -3352,45 +3374,164 @@
         }
 
         function toggleLiveScore(matchId) {
-            // Only allow admin to toggle live score
+            // Hanya admin yang bisa memilih pertandingan live
             if (!isAdmin) {
                 alert("Only administrators can select live matches.");
                 return;
             }
 
-            // If the clicked match is already live, do nothing (it will stay open)
+            // Jika pertandingan yang sama diklik lagi, berarti admin ingin menghentikan live score
             if (liveMatchId === matchId) {
+                // Hentikan live score
+                liveMatchId = null;
+                closeLiveScore(); // Tutup scoreboard
+                saveData(); // Simpan status liveMatchId = null ke Firestore
                 return;
             }
 
-            // If another match is live, remove its 'live-match' class
+            // Jika ada pertandingan live sebelumnya, hapus kelas 'live-match' dan indikator
             if (liveMatchId) {
                 const prevLiveMatch = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
                 if (prevLiveMatch) {
                     prevLiveMatch.classList.remove('live-match');
+                    const prevIndicator = prevLiveMatch.querySelector('.live-indicator');
+                    if (prevIndicator) {
+                        prevIndicator.remove();
+                    }
                 }
             }
 
+            // Set pertandingan yang baru sebagai live
             const match = document.querySelector(`.match[data-match-id="${matchId}"]`);
-            match.classList.add('live-match');
-            liveMatchId = matchId;
-            updateLiveScoreboard(match);
-            currentSet = 1;
-            document.getElementById('current-set').textContent = `Set ${currentSet}`;
-            document.getElementById('match-status').textContent = 'Ready to play';
-            updateProgressBar();
-            document.getElementById('live-scoreboard').classList.remove('hidden');
+            if (match) {
+                match.classList.add('live-match');
+                liveMatchId = matchId; // Update variabel global liveMatchId
+                updateLiveScoreboard(match); // Perbarui tampilan scoreboard lokal
+                currentSet = 1; // Reset set saat memulai live baru
+                document.getElementById('current-set').textContent = `Set ${currentSet}`;
+                document.getElementById('match-status').textContent = 'Playing';
+                updateProgressBar();
+                document.getElementById('live-scoreboard').classList.remove('hidden');
+
+                // Tambahkan live indicator
+                let liveIndicator = match.querySelector('.live-indicator');
+                if (!liveIndicator) {
+                    liveIndicator = document.createElement('div');
+                    liveIndicator.classList.add('live-indicator');
+                    match.appendChild(liveIndicator);
+                }
+
+                // Simpan liveMatchId yang baru ke Firestore
+                saveData();
+            }
         }
 
         function closeLiveScore() {
+            // Fungsi ini dipanggil ketika live score dihentikan (baik oleh admin atau karena tab diganti)
             if (liveMatchId) {
-                document.querySelector(`.match[data-match-id="${liveMatchId}"]`).classList.remove('live-match');
-                document.getElementById('live-scoreboard').classList.add('hidden');
-                clearInterval(matchInterval);
-                liveMatchId = null;
-                matchInterval = null;
+                const currentLiveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                if (currentLiveMatchElement) {
+                    currentLiveMatchElement.classList.remove('live-match');
+                    const currentIndicator = currentLiveMatchElement.querySelector('.live-indicator');
+                    if (currentIndicator) {
+                        currentIndicator.remove();
+                    }
+                }
             }
+            document.getElementById('live-scoreboard').classList.add('hidden');
+            clearInterval(matchInterval);
+            matchInterval = null;
+            // liveMatchId tidak di-null-kan di sini karena bisa jadi dipicu oleh listener Firestore
+            // yang akan mengatur liveMatchId ke null jika admin menghentikannya.
         }
+
+        function setupLiveMatchListener() {
+            // Hentikan listener sebelumnya jika ada
+            if (unsubscribeLiveMatchListener) {
+                unsubscribeLiveMatchListener();
+            }
+
+            unsubscribeLiveMatchListener = db.collection('config').doc('liveMatch')
+                .onSnapshot(async (doc) => {
+                    if (doc.exists) {
+                        const data = doc.data();
+                        const newLiveMatchId = data.liveMatchId;
+
+                        // Jika liveMatchId berubah atau baru diatur
+                        if (newLiveMatchId !== liveMatchId) {
+                            // Hapus kelas 'live-match' dan indikator dari pertandingan sebelumnya (jika ada)
+                            if (liveMatchId) {
+                                const prevLiveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                                if (prevLiveMatchElement) {
+                                    prevLiveMatchElement.classList.remove('live-match');
+                                    const prevIndicator = prevLiveMatchElement.querySelector('.live-indicator');
+                                    if (prevIndicator) {
+                                        prevIndicator.remove();
+                                    }
+                                }
+                            }
+
+                            liveMatchId = newLiveMatchId; // Update variabel global
+
+                            if (liveMatchId) {
+                                // Temukan pertandingan yang baru live
+                                const liveMatchElement = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                                if (liveMatchElement) {
+                                    // Pastikan bracket yang sesuai ditampilkan
+                                    const bracketId = liveMatchElement.closest('.bracket').id;
+                                    const tabToActivate = bracketId.replace('-bracket', '');
+                                    if (currentTab !== tabToActivate) {
+                                        // Ganti tab secara otomatis jika pertandingan live ada di tab lain
+                                        // Panggil changeTab tanpa menyimpan ke Firestore lagi
+                                        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                                        document.querySelector(`.tab[onclick="changeTab('${tabToActivate}')"]`).classList.add('active');
+
+                                        document.getElementById('singles-bracket').classList.add('hidden');
+                                        document.getElementById('doubles-bracket').classList.add('hidden');
+                                        document.getElementById('mix-doubles-bracket').classList.add('hidden');
+
+                                        document.getElementById(`${tabToActivate}-bracket`).classList.remove('hidden');
+                                        localStorage.setItem('currentTab', tabToActivate);
+                                        currentTab = tabToActivate; // Update currentTab global
+                                    }
+
+                                    liveMatchElement.classList.add('live-match');
+                                    updateLiveScoreboard(liveMatchElement);
+                                    document.getElementById('live-scoreboard').classList.remove('hidden');
+
+                                    // Tambahkan live indicator
+                                    let liveIndicator = liveMatchElement.querySelector('.live-indicator');
+                                    if (!liveIndicator) {
+                                        liveIndicator = document.createElement('div');
+                                        liveIndicator.classList.add('live-indicator');
+                                        liveMatchElement.appendChild(liveIndicator);
+                                    }
+
+                                    console.log(`Live match updated to: ${liveMatchId}`);
+                                } else {
+                                    // Jika pertandingan live tidak ditemukan di UI saat ini (misal, belum dimuat)
+                                    console.warn(`Live match element with ID ${liveMatchId} not found in current DOM.`);
+                                    closeLiveScore(); // Tutup scoreboard jika pertandingan tidak ditemukan
+                                }
+                            } else {
+                                // Jika liveMatchId null, berarti tidak ada pertandingan yang live
+                                closeLiveScore();
+                                console.log("No live match currently selected.");
+                            }
+                        }
+                    } else {
+                        // Dokumen liveMatch tidak ada, berarti tidak ada pertandingan live
+                        if (liveMatchId) {
+                            closeLiveScore();
+                            liveMatchId = null;
+                            console.log("Live match document does not exist.");
+                        }
+                    }
+                }, (error) => {
+                    console.error("Error listening to live match document:", error);
+                });
+        }
+
 
         function updateLiveScoreboard(match) {
             const player1Select = match.querySelector('.player[data-player="1"] .player-name-select');
@@ -3408,24 +3549,51 @@
             const p1ScoreInputs = match.querySelectorAll('.player[data-player="1"] .score-input');
             const p2ScoreInputs = match.querySelectorAll('.player[data-player="2"] .score-input');
 
-            p1ScoreInputs.forEach((scoreInput, i) => {
-                const scoreEl = document.createElement('div');
-                scoreEl.className = 'w-8 text-center font-medium';
-                scoreEl.textContent = scoreInput.value;
-                if (i === currentSet - 1) scoreEl.classList.add('text-blue-500');
-                scores1Container.appendChild(scoreEl);
-            });
+            let currentSetDisplay = 1;
+            let maxScoreReached = false;
 
-            p2ScoreInputs.forEach((scoreInput, i) => {
-                const scoreEl = document.createElement('div');
-                scoreEl.className = 'w-8 text-center font-medium';
-                scoreEl.textContent = scoreInput.value;
-                if (i === currentSet - 1) scoreEl.classList.add('text-blue-500');
-                scores2Container.appendChild(scoreEl);
-            });
+            for (let i = 0; i < p1ScoreInputs.length; i++) {
+                const p1s = parseInt(p1ScoreInputs[i].value);
+                const p2s = parseInt(p2ScoreInputs[i].value);
+
+                const scoreEl1 = document.createElement('div');
+                scoreEl1.className = 'w-8 text-center font-medium';
+                scoreEl1.textContent = p1s;
+                scores1Container.appendChild(scoreEl1);
+
+                const scoreEl2 = document.createElement('div');
+                scoreEl2.className = 'w-8 text-center font-medium';
+                scoreEl2.textContent = p2s;
+                scores2Container.appendChild(scoreEl2);
+
+                // Determine current active set for display
+                if ((p1s > 0 || p2s > 0) && !maxScoreReached) {
+                    currentSetDisplay = i + 1;
+                }
+                if ((p1s >= 21 && (p1s - p2s >= 2 || p1s === 30)) || (p2s >= 21 && (p2s - p1s >= 2 || p2s === 30))) {
+                    maxScoreReached = true; // Set ini sudah selesai
+                    if (i + 1 < p1ScoreInputs.length) { // Jika ada set berikutnya
+                        currentSetDisplay = i + 2; // Pindah ke set berikutnya
+                    }
+                }
+            }
+
+            // Highlight the current active set in the live scoreboard
+            const liveScoreElements1 = scores1Container.children;
+            const liveScoreElements2 = scores2Container.children;
+            if (liveScoreElements1[currentSetDisplay - 1]) {
+                liveScoreElements1[currentSetDisplay - 1].classList.add('text-blue-500');
+            }
+            if (liveScoreElements2[currentSetDisplay - 1]) {
+                liveScoreElements2[currentSetDisplay - 1].classList.add('text-blue-500');
+            }
+
+            currentSet = currentSetDisplay; // Update global currentSet
+            document.getElementById('current-set').textContent = `Set ${currentSet}`;
 
             updateProgressBar();
         }
+
 
         function updateProgressBar() {
             if (!liveMatchId) return;
