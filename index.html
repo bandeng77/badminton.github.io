@@ -12,12 +12,19 @@
         @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap'); /* Font untuk judul yang lebih berani */
 
         body {
-            background: linear-gradient(135deg, #FF0000 0%, #FFFFFF 100%); /* Merah ke Putih */
+            /* Latar belakang dari Google Drive */
+            background-image: url('https://drive.google.com/uc?export=view&id=1N0nU29Lv79FGYM9OIWIld3VZpEBzyySs');
+            background-size: cover; /* Menutupi seluruh area */
+            background-position: center; /* Pusatkan gambar */
+            background-repeat: no-repeat; /* Jangan ulangi gambar */
+            background-attachment: fixed; /* Agar gambar tetap saat scroll */
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
-            background-attachment: fixed; /* Agar gradien tetap saat scroll */
+            /* Tambahkan overlay untuk kontras teks */
+            background-color: rgba(255, 0, 0, 0.2); /* Merah transparan sebagai fallback/overlay */
+            background-blend-mode: overlay; /* Campurkan warna overlay dengan gambar */
         }
 
         /* Efek Partikel Latar Belakang (Konfeti) */
@@ -34,20 +41,20 @@
 
         .particle {
             position: absolute;
-            background-color: rgba(255, 255, 255, 0.8); /* Putih */
+            background-color: rgba(255, 255, 255, 0.9); /* Putih lebih solid */
             border-radius: 50%;
             animation: particle-fall linear infinite;
             opacity: 0;
         }
 
-        .particle:nth-child(2n) { background-color: rgba(255, 0, 0, 0.8); /* Merah */ }
-        .particle:nth-child(3n) { background-color: rgba(255, 215, 0, 0.8); /* Emas */ } /* Tambahan warna emas */
+        .particle:nth-child(2n) { background-color: rgba(255, 0, 0, 0.9); /* Merah lebih solid */ }
+        .particle:nth-child(3n) { background-color: rgba(255, 215, 0, 0.9); /* Emas lebih solid */ }
 
         @keyframes particle-fall {
-            0% { transform: translateY(-10vh) scale(0.5); opacity: 0; }
+            0% { transform: translateY(-15vh) scale(0.3); opacity: 0; } /* Mulai lebih tinggi, lebih kecil */
             10% { opacity: 1; }
             90% { opacity: 1; }
-            100% { transform: translateY(100vh) scale(1.2); opacity: 0; }
+            100% { transform: translateY(100vh) scale(1.5); opacity: 0; } /* Jatuh lebih jauh, lebih besar */
         }
 
         /* Efek Kembang Api */
@@ -60,7 +67,7 @@
             height: 0;
             border-radius: 50%;
             opacity: 0;
-            animation: firework-burst 1.5s ease-out forwards;
+            animation: firework-burst 1.8s ease-out forwards; /* Durasi lebih panjang */
             z-index: 9999; /* Pastikan di atas segalanya */
             pointer-events: none;
         }
@@ -71,20 +78,22 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            animation: firework-spark 1.5s ease-out forwards;
+            animation: firework-spark 1.8s ease-out forwards; /* Durasi lebih panjang */
         }
 
         .firework::before { background-color: #FF0000; } /* Merah */
-        .firework::after { background-color: #FFD700; animation-delay: 0.1s; } /* Emas */
+        .firework::after { background-color: #FFD700; animation-delay: 0.15s; } /* Emas, delay lebih panjang */
+        .firework:nth-child(3n)::before { background-color: #FFFFFF; animation-delay: 0.3s; } /* Putih */
+
 
         @keyframes firework-burst {
             0% { width: 0; height: 0; opacity: 1; }
-            100% { width: 200px; height: 200px; opacity: 0; }
+            100% { width: 250px; height: 250px; opacity: 0; } /* Lebih besar */
         }
 
         @keyframes firework-spark {
             0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(2); opacity: 0; } /* Spark lebih besar */
         }
 
 
@@ -94,74 +103,100 @@
             top: 0;
             left: 0;
             width: 100%;
-            height: 120px; /* Lebih tinggi */
+            height: 180px; /* Increased height to accommodate diagonal spread and larger size */
             overflow: hidden;
             z-index: 0;
             pointer-events: none;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-around; /* Distribute umbul-umbul lebih merata */
             align-items: flex-start;
-            padding-top: 10px;
+            padding: 15px 0; /* Add more padding */
         }
 
         .umbul-umbul {
-            position: relative; /* Diubah dari absolute agar flexbox bekerja */
+            position: relative;
             width: 0;
             height: 0;
-            border-left: 35px solid transparent; /* Lebih besar */
-            border-right: 35px solid transparent;
-            border-bottom: 90px solid; /* Lebih besar */
+            border-left: 40px solid transparent; /* Lebih lebar */
+            border-right: 40px solid transparent; /* Lebih lebar */
+            border-bottom: 100px solid; /* Lebih panjang */
             transform-origin: top center;
-            animation: sway 3s ease-in-out infinite alternate;
-            opacity: 0.9;
-            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.3)); /* Bayangan lebih kuat */
-            margin: 0 5px; /* Jarak antar umbul-umbul */
+            animation: sway 3.5s ease-in-out infinite alternate; /* Durasi lebih panjang, lebih halus */
+            opacity: 0.95; /* Lebih solid */
+            filter: drop-shadow(0 8px 8px rgba(0,0,0,0.4)); /* Bayangan lebih kuat */
+            margin: 0 8px; /* Jarak antar umbul-umbul */
         }
+
+        /* Specific positioning for diagonal umbul-umbul */
+        .umbul-umbul:nth-child(odd) {
+            transform: rotate(-20deg) translateY(0px); /* Diagonal lebih curam */
+            margin-left: -30px; /* Adjust to start from edge */
+        }
+
+        .umbul-umbul:nth-child(even) {
+            transform: rotate(20deg) translateY(0px); /* Diagonal lebih curam */
+            margin-right: -30px; /* Adjust to start from edge */
+        }
+
+        /* Adjust animation delay for diagonal effect */
+        .umbul-umbul:nth-child(3n+1) { animation-delay: 0s; }
+        .umbul-umbul:nth-child(3n+2) { animation-delay: 0.7s; } /* Delay lebih panjang */
+        .umbul-umbul:nth-child(3n+3) { animation-delay: 1.4s; } /* Delay lebih panjang */
+
+
+        @keyframes sway {
+            0% { transform: rotate(-20deg) translateY(0px); }
+            50% { transform: rotate(-23deg) translateY(-8px); } /* Gerakan sway lebih besar */
+            100% { transform: rotate(-17deg) translateY(0px); }
+        }
+
+        .umbul-umbul:nth-child(even) {
+            animation: sway-even 3.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes sway-even {
+            0% { transform: rotate(20deg) translateY(0px); }
+            50% { transform: rotate(23deg) translateY(-8px); } /* Gerakan sway lebih besar */
+            100% { transform: rotate(17deg) translateY(0px); }
+        }
+
 
         .umbul-umbul.red { border-bottom-color: #FF0000; }
         .umbul-umbul.white { border-bottom-color: #FFFFFF; }
         .umbul-umbul.gold { border-bottom-color: #FFD700; } /* Tambahan warna emas */
 
-        /* Animasi delay untuk umbul-umbul */
-        .umbul-umbul:nth-child(3n+1) { animation-delay: 0s; }
-        .umbul-umbul:nth-child(3n+2) { animation-delay: 0.5s; }
-        .umbul-umbul:nth-child(3n+3) { animation-delay: 1s; }
-
-
-        @keyframes sway {
-            0% { transform: rotate(0deg) translateY(0px); }
-            50% { transform: rotate(3deg) translateY(-5px); }
-            100% { transform: rotate(-3deg) translateY(0px); }
-        }
 
         /* Ornamen Bendera Kecil di Sudut */
         .flag-ornament {
             position: fixed; /* Fixed agar tetap di viewport */
-            width: 60px; /* Lebih besar */
-            height: 35px; /* Lebih besar */
+            width: 70px; /* Lebih besar */
+            height: 40px; /* Lebih besar */
             background: linear-gradient(to bottom, #FF0000 50%, #FFFFFF 50%);
-            border: 2px solid #8B0000; /* Border lebih tebal */
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3); /* Bayangan lebih kuat */
+            border: 3px solid #8B0000; /* Border lebih tebal */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4); /* Bayangan lebih kuat */
             z-index: 10; /* Di atas konten lain */
             pointer-events: none;
-            animation: float 4s ease-in-out infinite alternate, rotate-flag 8s linear infinite; /* Tambah animasi rotate */
+            animation: float 5s ease-in-out infinite alternate, rotate-flag 10s linear infinite; /* Animasi lebih panjang dan rotasi */
             transform-origin: bottom left; /* Titik putar untuk bendera */
         }
 
-        .flag-ornament.top-left { top: 20px; left: 20px; animation-delay: 0s; }
-        .flag-ornament.top-right { top: 20px; right: 20px; animation-delay: 0.5s; transform-origin: bottom right; }
-        .flag-ornament.bottom-left { bottom: 20px; left: 20px; animation-delay: 1s; }
-        .flag-ornament.bottom-right { bottom: 20px; right: 20px; animation-delay: 1.5s; transform-origin: bottom right; }
+        .flag-ornament.top-left { top: 25px; left: 25px; animation-delay: 0s; }
+        .flag-ornament.top-right { top: 25px; right: 25px; animation-delay: 0.7s; transform-origin: bottom right; }
+        .flag-ornament.bottom-left { bottom: 25px; left: 25px; animation-delay: 1.4s; }
+        .flag-ornament.bottom-right { bottom: 25px; right: 25px; animation-delay: 2.1s; transform-origin: bottom right; }
 
         @keyframes float {
             0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); } /* Gerakan float lebih besar */
+            50% { transform: translateY(-15px); } /* Gerakan float lebih besar */
             100% { transform: translateY(0px); }
         }
 
         @keyframes rotate-flag {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            0% { transform: rotateY(0deg) rotateX(0deg); }
+            25% { transform: rotateY(90deg) rotateX(10deg); }
+            50% { transform: rotateY(180deg) rotateX(0deg); }
+            75% { transform: rotateY(270deg) rotateX(-10deg); }
+            100% { transform: rotateY(360deg) rotateX(0deg); }
         }
 
         /* Siluet Pahlawan / Monumen */
@@ -170,42 +205,42 @@
             bottom: 0;
             left: 50%;
             transform: translateX(-50%);
-            width: 300px; /* Ukuran siluet */
-            height: 200px;
+            width: 350px; /* Ukuran siluet lebih besar */
+            height: 250px;
             background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Monumen_Nasional_Jakarta.svg/1200px-Monumen_Nasional_Jakarta.svg.png'); /* Contoh Monas */
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center bottom;
             z-index: 0; /* Di belakang konten utama, di atas partikel */
-            opacity: 0.1; /* Sedikit transparan */
-            animation: appear-fade 10s ease-out infinite alternate; /* Animasi muncul-hilang */
+            opacity: 0.15; /* Lebih terlihat */
+            animation: appear-fade 12s ease-out infinite alternate; /* Animasi lebih panjang */
         }
 
         @keyframes appear-fade {
-            0% { opacity: 0.05; transform: translateX(-50%) translateY(20px); }
-            50% { opacity: 0.15; transform: translateX(-50%) translateY(0px); }
-            100% { opacity: 0.05; transform: translateX(-50%) translateY(20px); }
+            0% { opacity: 0.1; transform: translateX(-50%) translateY(25px); }
+            50% { opacity: 0.2; transform: translateX(-50%) translateY(0px); }
+            100% { opacity: 0.1; transform: translateX(-50%) translateY(25px); }
         }
 
         /* Pita Merah Putih */
         .ribbon {
             position: absolute;
-            top: 100px; /* Di bawah judul */
+            top: 110px; /* Di bawah judul, sedikit lebih rendah */
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
-            max-width: 900px;
-            height: 30px;
+            width: 85%; /* Lebih lebar */
+            max-width: 950px;
+            height: 35px; /* Lebih tebal */
             background: linear-gradient(to right, #FF0000 50%, #FFFFFF 50%);
-            border-radius: 15px;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.3);
+            border-radius: 18px; /* Lebih membulat */
+            box-shadow: 0 8px 15px rgba(0,0,0,0.4); /* Bayangan lebih kuat */
             z-index: 1;
-            animation: ribbon-wave 5s ease-in-out infinite alternate;
+            animation: ribbon-wave 6s ease-in-out infinite alternate; /* Animasi lebih panjang */
         }
 
         @keyframes ribbon-wave {
             0% { transform: translateX(-50%) scaleX(1) translateY(0px); }
-            50% { transform: translateX(-50%) scaleX(1.02) translateY(-5px); }
+            50% { transform: translateX(-50%) scaleX(1.03) translateY(-7px); } /* Efek wave lebih besar */
             100% { transform: translateX(-50%) scaleX(1) translateY(0px); }
         }
 
@@ -467,28 +502,28 @@
 
         .tournament-title {
             font-family: 'Bebas Neue', sans-serif; /* Font lebih berani */
-            font-size: 4rem; /* Sangat besar */
+            font-size: 4.5rem; /* Sangat besar */
             font-weight: 900; /* Sangat tebal */
-            margin: 3rem auto 2rem; /* Auto margin untuk tengah */
+            margin: 3.5rem auto 2.5rem; /* Auto margin untuk tengah */
             color: #8B0000; /* Merah gelap */
-            text-shadow: 4px 4px 8px rgba(0,0,0,0.4), 0 0 10px #FFD700; /* Bayangan lebih kuat + kilau emas */
-            letter-spacing: 3px; /* Spasi antar huruf lebih lebar */
+            text-shadow: 5px 5px 10px rgba(0,0,0,0.5), 0 0 15px #FFD700; /* Bayangan lebih kuat + kilau emas */
+            letter-spacing: 4px; /* Spasi antar huruf lebih lebar */
             line-height: 1.1; /* Jarak antar baris */
             position: relative;
             z-index: 2;
-            animation: title-pop 1s ease-out forwards, title-glow 3s infinite alternate; /* Animasi muncul + glow */
+            animation: title-pop 1.2s ease-out forwards, title-glow 3.5s infinite alternate; /* Animasi muncul + glow lebih panjang */
             text-align: center; /* Pastikan teks di tengah */
             width: fit-content; /* Agar auto margin bekerja */
         }
 
         @keyframes title-pop {
-            0% { opacity: 0; transform: translateY(-50px) scale(0.8); }
+            0% { opacity: 0; transform: translateY(-60px) scale(0.7); } /* Mulai lebih tinggi, lebih kecil */
             100% { opacity: 1; transform: translateY(0px) scale(1); }
         }
 
         @keyframes title-glow {
-            0% { text-shadow: 4px 4px 8px rgba(0,0,0,0.4), 0 0 10px #FFD700; }
-            100% { text-shadow: 4px 4px 8px rgba(0,0,0,0.4), 0 0 20px #FFD700, 0 0 30px rgba(255,0,0,0.5); } /* Glow lebih kuat + merah */
+            0% { text-shadow: 5px 5px 10px rgba(0,0,0,0.5), 0 0 15px #FFD700; }
+            100% { text-shadow: 5px 5px 10px rgba(0,0,0,0.5), 0 0 25px #FFD700, 0 0 40px rgba(255,0,0,0.6); } /* Glow lebih kuat + merah */
         }
 
         .tabs {
@@ -623,6 +658,7 @@
         @media (max-width: 768px) {
             body {
                 background-attachment: scroll; /* Nonaktifkan fixed background di mobile */
+                background-size: auto 100%; /* Sesuaikan ukuran gambar untuk mobile */
             }
 
             .background-particles {
@@ -633,35 +669,56 @@
             }
 
             .umbul-umbul-container {
-                height: 80px;
-                padding-top: 5px;
+                height: 120px; /* Adjust for mobile */
+                padding-top: 10px;
             }
             .umbul-umbul {
-                border-left: 20px solid transparent;
-                border-right: 20px solid transparent;
-                border-bottom: 60px solid;
-                margin: 0 2px;
+                border-left: 25px solid transparent;
+                border-right: 25px solid transparent;
+                border-bottom: 70px solid;
+                margin: 0 3px;
             }
+            /* Adjust diagonal for mobile */
+            .umbul-umbul:nth-child(odd) {
+                transform: rotate(-12deg) translateY(0px);
+                margin-left: -15px;
+            }
+            .umbul-umbul:nth-child(even) {
+                transform: rotate(12deg) translateY(0px);
+                margin-right: -15px;
+            }
+            @keyframes sway {
+                0% { transform: rotate(-12deg) translateY(0px); }
+                50% { transform: rotate(-15deg) translateY(-4px); }
+                100% { transform: rotate(-9deg) translateY(0px); }
+            }
+            @keyframes sway-even {
+                0% { transform: rotate(12deg) translateY(0px); }
+                50% { transform: rotate(15deg) translateY(-4px); }
+                100% { transform: rotate(9deg) translateY(0px); }
+            }
+
+
             .flag-ornament {
-                width: 40px;
-                height: 25px;
-                border: 1px solid #8B0000;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                width: 50px;
+                height: 30px;
+                border: 2px solid #8B0000;
+                box-shadow: 0 3px 6px rgba(0,0,0,0.25);
             }
-            .flag-ornament.top-left { top: 10px; left: 10px; }
-            .flag-ornament.top-right { top: 10px; right: 10px; }
-            .flag-ornament.bottom-left { bottom: 10px; left: 10px; }
-            .flag-ornament.bottom-right { bottom: 10px; right: 10px; }
+            .flag-ornament.top-left { top: 15px; left: 15px; }
+            .flag-ornament.top-right { top: 15px; right: 15px; }
+            .flag-ornament.bottom-left { bottom: 15px; left: 15px; }
+            .flag-ornament.bottom-right { bottom: 15px; right: 15px; }
 
             .hero-silhouette {
-                width: 200px;
-                height: 150px;
-                opacity: 0.08;
+                width: 250px;
+                height: 180px;
+                opacity: 0.1;
             }
             .ribbon {
-                top: 80px;
-                height: 20px;
-                width: 90%;
+                top: 90px;
+                height: 25px;
+                width: 95%;
             }
 
             .bracket {
@@ -738,9 +795,9 @@
             }
 
             .tournament-title {
-                font-size: 2.2rem;
-                margin: 1.5rem auto 1rem; /* Auto margin untuk tengah */
-                letter-spacing: 1px;
+                font-size: 2.5rem;
+                margin: 1.8rem auto 1.2rem; /* Auto margin untuk tengah */
+                letter-spacing: 2px;
             }
 
             .auth-controls {
@@ -782,6 +839,9 @@
         <div class="umbul-umbul white"></div>
         <div class="umbul-umbul gold"></div>
         <div class="umbul-umbul red"></div>
+        <div class="umbul-umbul white"></div>
+        <div class="umbul-umbul gold"></div>
+        <div class="umbul-umbul red"></div> <!-- Tambahan umbul-umbul -->
         <div class="umbul-umbul white"></div>
         <div class="umbul-umbul gold"></div>
     </div>
@@ -2650,85 +2710,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="match" data-match-id="mix-doubles-sf2" onclick="toggleLiveScore('mix-doubles-sf2')">
-                <div class="player" data-player="1">
-                    <select class="player-name-select" data-player-select="1" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="1">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="player" data-player="2">
-                    <select class="player-name-select" data-player-select="2" disabled></select>
-                    <div class="score-container">
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="1" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="1" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="2" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="2" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="score-input-wrapper">
-                            <input type="number" class="score-input" value="0" min="0" max="30" data-set="3" disabled>
-                            <div class="score-controls">
-                                <div class="score-up" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 14l5-5 5 5z"/></svg>
-                                </div>
-                                <div class="score-down" data-set="3" data-player="2">
-                                    <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <!-- Connector Semi Finals to Final -->
@@ -3059,7 +3040,8 @@
             try {
                 await db.collection('tournamentData').doc('currentBracket').set(allBracketData);
                 console.log("Data successfully written to Firestore!");
-            } catch (error) {
+            }
+            catch (error) {
                 console.error("Error writing document to Firestore: ", error);
             }
         }
@@ -3227,8 +3209,8 @@
             setMatchHeightCssVariable();
             window.addEventListener('resize', setMatchHeightCssVariable);
 
-            createParticles();
-            setInterval(createFirework, 5000);
+            createParticles(80); // Lebih banyak partikel
+            setInterval(createFirework, 3000); // Kembang api lebih sering
         }
 
         // Function to dynamically set CSS variable for match height
@@ -3242,19 +3224,20 @@
         }
 
         // Function to create background particles
-        function createParticles() {
+        function createParticles(num = 50) { // Tambahkan parameter num
             const container = document.querySelector('.background-particles');
-            const numParticles = 50;
+            container.innerHTML = ''; // Bersihkan partikel lama jika ada
+            const numParticles = num; // Gunakan parameter num
 
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
                 particle.classList.add('particle');
-                const size = Math.random() * 5 + 5;
+                const size = Math.random() * 8 + 7; // Ukuran lebih bervariasi dan sedikit lebih besar
                 particle.style.width = `${size}px`;
                 particle.style.height = `${size}px`;
                 particle.style.left = `${Math.random() * 100}vw`;
-                particle.style.animationDuration = `${Math.random() * 5 + 5}s`;
-                particle.style.animationDelay = `${Math.random() * 5}s`;
+                particle.style.animationDuration = `${Math.random() * 6 + 6}s`; // Durasi lebih panjang
+                particle.style.animationDelay = `${Math.random() * 6}s`; // Delay lebih panjang
                 container.appendChild(particle);
             }
         }
@@ -3376,24 +3359,28 @@
                 return;
             }
 
-            const match = document.querySelector(`.match[data-match-id="${matchId}"]`);
-            if (match.classList.contains('live-match')) {
-                match.classList.remove('live-match');
-                document.getElementById('live-scoreboard').classList.add('hidden');
-                clearInterval(matchInterval);
-                liveMatchId = null;
-                matchInterval = null;
-            } else {
-                document.querySelectorAll('.live-match').forEach(m => m.classList.remove('live-match'));
-                match.classList.add('live-match');
-                liveMatchId = matchId;
-                updateLiveScoreboard(match);
-                currentSet = 1;
-                document.getElementById('current-set').textContent = `Set ${currentSet}`;
-                document.getElementById('match-status').textContent = 'Ready to play';
-                updateProgressBar();
-                document.getElementById('live-scoreboard').classList.remove('hidden');
+            // If the clicked match is already live, do nothing (it will stay open)
+            if (liveMatchId === matchId) {
+                return;
             }
+
+            // If another match is live, remove its 'live-match' class
+            if (liveMatchId) {
+                const prevLiveMatch = document.querySelector(`.match[data-match-id="${liveMatchId}"]`);
+                if (prevLiveMatch) {
+                    prevLiveMatch.classList.remove('live-match');
+                }
+            }
+
+            const match = document.querySelector(`.match[data-match-id="${matchId}"]`);
+            match.classList.add('live-match');
+            liveMatchId = matchId;
+            updateLiveScoreboard(match);
+            currentSet = 1;
+            document.getElementById('current-set').textContent = `Set ${currentSet}`;
+            document.getElementById('match-status').textContent = 'Ready to play';
+            updateProgressBar();
+            document.getElementById('live-scoreboard').classList.remove('hidden');
         }
 
         function closeLiveScore() {
